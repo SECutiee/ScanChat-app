@@ -4,7 +4,7 @@ require 'roda'
 require 'slim'
 
 module ScanChat
-  # Base class for Credence Web Application
+  # Base class for ScanChat Web Application
   class App < Roda
     plugin :render, engine: 'slim', views: 'app/presentation/views'
     plugin :assets, css: 'style.css', path: 'app/presentation/assets'

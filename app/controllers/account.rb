@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 require 'roda'
-require_relative './app'
+require_relative 'app'
 
 module ScanChat
-  # Web controller for Credence API
+  # Web controller for ScanChat API
   class App < Roda
     route('account') do |routing|
       routing.on do
