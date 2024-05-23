@@ -10,7 +10,7 @@ nav role="navigation" class="navbar navbar-expand-sm navbar-dark bg-primary"
       ul class="navbar-nav me-auto"
         - if @current_account
           li class="nav-item"
-            a class="nav-link disabled" href="/" Chatrooms
+            a class="nav-link disabled" href="/" Projects
           li class="nav-item dropdown"
             a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"
               = "#{@current_account['username']}"
@@ -22,5 +22,4 @@ nav role="navigation" class="navbar navbar-expand-sm navbar-dark bg-primary"
           li class="nav-item"
             a class="nav-link" href='/auth/login' login
           li class="nav-item"
-            a class="nav-link disabled" href='/auth/login' register
-        
+            a class="nav-link" href='/auth/register' register
