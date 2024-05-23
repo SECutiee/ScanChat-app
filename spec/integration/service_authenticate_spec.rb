@@ -5,8 +5,8 @@ require 'webmock/minitest'
 
 describe 'Test Service Objects' do
   before do
-    @scanchats = { username: 'soumya.ray', password: 'mypa$$w0rd' }
-    @mal_scanchats = { username: 'soumya.ray', password: 'wrongpassword' }
+    @credentials = { username: 'soumya.ray', password: 'mypa$$w0rd' }
+    @mal_credentials = { username: 'soumya.ray', password: 'wrongpassword' }
     @api_account = { attributes:
                        { username: 'soumya.ray', email: 'sray@nthu.edu.tw' } }
   end
@@ -18,7 +18,7 @@ describe 'Test Service Objects' do
   describe 'Find authenticated account' do
     it 'HAPPY: should find an authenticated account' do
       WebMock.stub_request(:post, "#{API_URL}/auth/authenticate")
-             .with(body: @scanchats.to_json)
+             .with(body: @credentials.to_json)
              .to_return(body: @api_account.to_json,
                         headers: { 'content-type' => 'application/json' })
 
@@ -30,10 +30,10 @@ describe 'Test Service Objects' do
 
     it 'BAD: should not find a false authenticated account' do
       WebMock.stub_request(:post, "#{API_URL}/auth/authenticate")
-             .with(body: @mal_scanchats.to_json)
+             .with(body: @mal_credentials.to_json)
              .to_return(status: 403)
       _(proc {
-        ScanChat::AuthenticateAccount.new(app.config).call(**@mal_scanchats)
+        ScanChat::AuthenticateAccount.new(app.config).call(**@mal_credentials)
       }).must_raise ScanChat::AuthenticateAccount::UnauthorizedError
     end
   end
