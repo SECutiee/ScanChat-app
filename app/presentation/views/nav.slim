@@ -1,7 +1,7 @@
 nav role="navigation" class="navbar navbar-expand-sm navbar-dark bg-primary"
   div class="container-fluid"
     a class="navbar-brand" rel="home" href="/" title="Securely Share Configurations"
-        img alt="ScanChat" src="/logo.png" style="max-width:35px; margin-top: -7px;"
+        img alt="ScanChat" src="/logo.webp" style="max-width:35px; margin-top: -7px;"
     a class="navbar-brand" href="/" ScanChat
     button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation"
       span class="navbar-toggler-icon"
@@ -14,10 +14,19 @@ nav role="navigation" class="navbar navbar-expand-sm navbar-dark bg-primary"
           li class="nav-item dropdown"
             a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"
               = "#{@current_account['username']}"
-
             div class=-"dropdown-menu"
               a class="dropdown-item" href="/account/#{@current_account['username']}" account
               a class="dropdown-item" href='/auth/logout' logout
+              
+          / li class="nav-item"
+          /   a class="nav-link"
+          /     - if @profile_picture
+          /       img src="/profile.png" class="rounded-circle" alt="profile picture"
+          /     - else
+          /       svg src="/person-circle.svg" class="rounded-circle" alt="profile picture"
+                
+
+            
         - else
           li class="nav-item"
             a class="nav-link" href='/auth/login' login
