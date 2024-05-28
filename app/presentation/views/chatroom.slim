@@ -1,0 +1,50 @@
+    div class="container mt-4"
+        nav class="navbar navbar-expand-lg bg-light" data-bs-theme= "light"
+            div class="container-fluid"
+                a class="navbar-brand fs-5" SECutiee
+                a class="navbar-brand fs-6" Members: John, Jane, Doe, ... 
+                button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation"
+                    span class="navbar-toggler-icon"
+                div class="collapse navbar-collapse" id="navbarColor01"
+                    ul class="navbar-nav ms-auto"
+                        li class="nav-item dropdown"
+                            a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" Options
+                            div class="dropdown-menu dropdown-menu-end"
+                                a class="dropdown-item" View Members 
+                                a class="dropdown-item" Invite Members
+                                / if @current_account is owner of chatroom
+                                div class="dropdown-divider"
+                                a class="dropdown-item disabled" Edit Chatroom
+        div class="chat-body p-2 container-sm bg-light border-top border-secondary p-2"
+            
+            div class="row d-flex justify-content-start"
+                div class="col-9 d-flex align-items-start justify-content-start"
+                    div class="d-flex flex-column me-1"
+                        img src="person-circle.svg" class="rounded-circleborder border-dark chat-profile-pic me-2 mt-1" alt="profile picture"
+                        p class="fw-bold m-0" John
+                    div class="d-flex rounded justify-content-start p-2 bg-secondary"
+                        p class="m-0" Hi Jane, how are you?
+                                
+            div class="row d-flex justify-content-start"
+                div class="col-9 d-flex align-items-start justify-content-start"
+                    div class="d-flex flex-column me-1"
+                        img src="person-circle.svg" class="rounded-circleborder border-dark chat-profile-pic me-2 mt-1" alt="profile picture"
+                        p class="fw-bold m-0" Jane
+                    div class="d-flex rounded justify-content-start p-2 bg-secondary"
+                        p class="m-0" Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, velit ac aliquet tincidunt, mauris nisl tincidunt nunc, ac lacinia justo nisl id nunc. Nullam auctor, nunc id aliquam lacinia, justo nisl lacinia nunc, ac lacinia justo nisl id nunc. Sed euismod, velit ac aliquet tincidunt, mauris nisl tincidunt nunc, ac lacinia justo nisl id nunc. Nullam auctor, nunc id aliquam lacinia, justo nisl lacinia nunc, ac lacinia justo nisl id nunc.
+                
+            div class="row d-flex justify-content-start"
+                div class="col-9 d-flex align-items-start justify-content-start"
+                    div class="d-flex flex-column me-1"
+                        img src="person-circle.svg" class="rounded-circleborder border-dark chat-profile-pic me-2 mt-1" alt="profile picture"
+                        p class="fw-bold m-0" Jane
+                    div class="d-flex rounded justify-content-start p-2 bg-secondary"
+                        p class="m-0" Hi John, how are you?afasfasfafasdf asd fasd fas fas fas fas fasd fas fas f
+
+            div class="row d-flex justify-content-end"
+                div class="col-9 d-flex align-items-end justify-content-end"
+                    / div class="d-flex flex-column me-1"
+                    /     img src="person-circle.svg" class="rounded-circleborder border-dark chat-profile-pic me-2 mt-1" alt="profile picture"
+                    /     p class="fw-boldm-0" Jane:
+                    div class="d-flex rounded justify-content-end p-2 bg-primary text-light"
+                        p class="m-0" Hi John, how are you?afasfasfafasdf asd fasd fas fas fas fas fasd fas fas f

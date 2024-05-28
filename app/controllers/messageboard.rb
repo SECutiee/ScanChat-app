@@ -9,16 +9,14 @@ module ScanChat
     route('messageboard') do |routing|
       @messageboard_route = '/messageboard'
 
-        # POST /messageboard/new
-        # Create a new messageboard
+      # POST /messageboard/new
+      # Create a new messageboard
 
+      # GET /messageboard/new
+      # Form to create a new messageboard
 
-        # GET /messageboard/new
-        # Form to create a new messageboard
-
-
-        # GET /messageboard/:id
-        # Show a messageboard
-
-end
+      # GET /messageboard/:id
+      # Show a messageboard
+    end
+  end
 end

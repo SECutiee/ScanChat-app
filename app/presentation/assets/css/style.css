@@ -3,3 +3,51 @@
     width:100%;
     display:block;
   }
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+.chat-header .chat-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+.chat-body {
+    overflow-y: auto;
+    height: 70vh;
+}
+.message-bubble {
+    padding: 10px;
+
+}
+.message-bubble .nickname {
+    font-weight: 500;
+}
+
+.me{
+    background-color: #007bff;
+    color: white;
+    align-self: flex-end;
+}
+
+.chat-body >.row{
+  margin:10px;
+}
+
+.chat-profile-pic{
+  height:30px;
+  width:auto;
+}
+
+.nickname{
+  text-align:center
+}
+
+.navbar.bg-dark {
+  background-image:none !important;
+
+}
+
