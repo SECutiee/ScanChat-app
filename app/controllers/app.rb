@@ -20,6 +20,7 @@ module ScanChat
       routing.assets
       routing.multi_route
 
+      app.logger.info 'Request: ' + routing.url
       # GET /
       routing.root do
         view 'home', locals: { current_account: @current_account }

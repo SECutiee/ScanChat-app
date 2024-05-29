@@ -1,6 +1,9 @@
     - puts("slim: Chatroom:#{chatroom}")
-    - puts("slim: Current Account:#{@current_account}")
+    - puts("slim: Current Account:#{current_account}")
+    - puts("slim: Messages:#{messages}")
+
     div class="container mt-4"
+    - unless chatroom == []
         nav class="navbar navbar-expand-lg bg-light" data-bs-theme= "light"
             div class="container-fluid"
                 a class="navbar-brand" = "#{chatroom[0]['thread']['attributes']['name']}"
@@ -27,15 +30,18 @@
                 /                 a class="dropdown-item disabled" Edit Chatroom
         div class="chat-body p-2 container-sm bg-light border-top border-secondary p-2"
             
-            - @chatroom[1..].each do |message|
+            - messages.each do |message|
                 div class="row d-flex justify-content-start"
                     div class="col-9 d-flex align-items-start justify-content-start"
                         div class="d-flex flex-column me-3"
-                            img src="person-circle.svg" class="rounded-circle border border-dark chat-profile-pic mt-1" alt="profile picture"
-                            p class="fw-bold m-0" = message['sender_username']
+                            img src="/person-circle.svg" class="rounded-circle border border-dark chat-profile-pic mt-1" alt="profile picture"
+                            p class="fw-bold m-0 text-center" = message['sender_nickname']
                         div class="d-flex rounded justify-content-start p-2 bg-secondary"
                             p class="m-0" = message['content']
-
+                end
+    - else 
+        div class="alert alert-warning" role="alert"
+            h4 class="alert-heading" This chatroom is not available
             / div class="row d-flex justify-content-start"
             /     div class="col-9 d-flex align-items-start justify-content-start"
             /         div class="d-flex flex-column me-3"
