@@ -41,7 +41,7 @@ module ScanChat
 
     configure :development, :test do
       # Suppresses log info/warning outputs in dev/test environments
-      logger.level = Logger::ERROR
+      logger.level = Logger::DEBUG
 
       # use Rack::Session::Cookie,
       #     expire_after: ONE_MONTH, secret: config.SESSION_SECRET

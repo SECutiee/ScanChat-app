@@ -7,10 +7,10 @@ module ScanChat
   # Web controller for ScanChat API
   class App < Roda
     route('chatroom') do |routing|
-      routing.is do
-        @chatroom_route = '/chatroom'
-        view 'chatroom', locals: { current_account: @current_account }
-      end
+      # routing.is do
+      #   @chatroom_route = '/chatroom'
+      #   view 'chatroom', locals: { current_account: @current_account }
+      # end
       # POST /chatroom/new
       # Create a new chatroom
 
@@ -20,9 +20,11 @@ module ScanChat
       # GET /chatroom/:id
       # Show a chatroom
       routing.on String do |chatroom_id|
-        routing.get do
-          chatroom = LoadChatroom.new(App.config).call(chatroom_id:)
-          view 'chatroom', locals: { chatroom:, current_account: @current_account }
+        routing.get do # TODO: make this secure, right now everybody can request it
+          @chatroom = LoadChatroom.new(App.config).call(chatroom_id:)
+          #  App.logger.info("Chatroom: #{@chatroom}")
+          App.logger.info("routing: Current_account: #{@current_account}")
+          view 'chatroom', locals: { chatroom: @chatroom }
         end
       end
 
