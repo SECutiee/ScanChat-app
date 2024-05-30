@@ -35,7 +35,7 @@ module ScanChat
           routing.redirect @login_route
         end
       end
-
+      # GET /auth/logout
       @logout_route = '/auth/logout'
       routing.on 'logout' do
         routing.get do
@@ -44,7 +44,7 @@ module ScanChat
           routing.redirect @login_route
         end
       end
-
+      # POST /auth/logout
       @register_route = '/auth/register'
       routing.is 'register' do
         routing.get do

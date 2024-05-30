@@ -7,13 +7,27 @@
         nav class="navbar navbar-expand-lg bg-light" data-bs-theme= "light"
             div class="container-fluid"
                 a class="navbar-brand" = "#{chatroom[0]['thread']['attributes']['name']}"
-                p class="navbar-text m-0"  = "Members: #{chatroom[0]['members'].map { |member| member['attributes']['nickname'] }.take(3).join(', ')}#{', ...' if chatroom[0]['members'].size > 3}"
+                p class="navbar-text m-0"  = "Members: #{([chatroom[0]["thread"]["attributes"]["owner"]["attributes"]["nickname"]] + chatroom[0]['members'].map { |member| member['attributes']['nickname'] }).take(3).join(', ')}#{', ...' if chatroom[0]['members'].size > 3}"
                 div class="ms-auto btn-group" role="group" aria-label="Button group with nested dropdown"
                     button type="button" class="btn btn-primary" Invite Members
                     div class="btn-group" role="group"
                         button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         div class="dropdown-menu dropdown-menu-end" aria-labelledby="btnGroupDrop1" style=""
-                            a class="dropdown-item" href="/members" View Members
+                            a class="dropdown-item btn btn-primary" data-bs-toggle="modal" data-bs-target="#memberModal" href="/members" View Members
+                            #memberModal.modal
+                                .modal-dialog
+                                    .modal-content
+                                    .modal-header
+                                        h4.modal-title
+                                        | Modal Heading
+                                        button.btn-close[type="button" data-bs-dismiss="modal" aria-label="Close"]
+                                            span [aria-hidden="true"]
+                                    .modal-body
+                                        p Modal body text goes here.
+                                    .modal-footer
+                                        button.btn.btn-primary[type="button"] Save Changes
+                                        | Close
+                                        button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
                             a class="dropdown-item" href="/edit" Edit Chatroom
 
                 / div class="collapse navbar-collapse"
@@ -73,3 +87,5 @@
             /         /     p class="fw-boldm-0" Jane:
             /         div class="d-flex rounded justify-content-end p-2 bg-primary text-light"
             /             p class="m-0" Hi John, how are you?afasfasfafasdf asd fasd fas fas fas fas fasd fas fas f
+
+    
