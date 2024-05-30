@@ -10,7 +10,7 @@ div class="row" style = "margin-top: 30px;"
       div class="card-body"
         p class="card-title" Need a Messageboard instead?
         / p class="card-text" Register and start to create QR-code based messageboards and share easily with your friends.
-        - if current_account
+        - if current_account.logged_in?
          a href="#" class="btn btn-primary" Create a new Messageboard
         - else
           a href="#" class="btn btn-primary" Register now and start creating
@@ -20,7 +20,7 @@ div class="row" style = "margin-top: 30px;"
     h1 Welcome to ScanChat
     p This application allows users to quickly and securely share messages or ideas within a limited timeframe, ensuring privacy and information security while encouraging timely and instant communication.
 
-    - unless current_account
+    - unless current_account.logged_in?
       p 
         a href='/auth/login' login to start!
 div class="row" style = "margin-top: 30px;"

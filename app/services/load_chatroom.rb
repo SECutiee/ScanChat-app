@@ -13,34 +13,33 @@ module ScanChat
       @config = config
     end
 
-    def call(chatroom_id:)
+    def call(current_account, chatroom_id:)
       begin
-        response = HTTP.get("#{@config.API_URL}/chatrooms/#{chatroom_id}")
-
+        # GET api/v1/chatrooms/[thread_id]
+        response = HTTP.auth("Bearer #{current_account.auth_token}").get("#{@config.API_URL}/chatrooms/#{chatroom_id}")
+        App.logger.info("Chatroom: #{response}")
         raise(UnauthorizedError) if response.code == 403
         raise(ApiServerError) if response.code != 200
 
-        chatroom = []
-        chatroom.append(response.parse['attributes'])
-        # GET api/v1/chatrooms/[thread_id]/messages
-        response = HTTP.get("#{@config.API_URL}/chatrooms/#{chatroom_id}/messages")
+        response.code == 200 ? JSON.parse(response.to_s)['data'] : nil
+        # # GET api/v1/chatrooms/[thread_id]/messages
+        # response = HTTP.auth("Bearer #{current_account.auth_token}").get("#{@config.API_URL}/chatrooms/#{chatroom_id}/messages")
 
-        raise(UnauthorizedError) if response.code == 403
-        raise(ApiServerError) if response.code != 200
+        # raise(UnauthorizedError) if response.code == 403
+        # raise(ApiServerError) if response.code != 200
 
-        messages = response.parse['data'].map { |message| message['attributes'] }
-        chatroom.concat(messages)
-      rescue UnauthorizedError
-        chatroom = []
-        messages = []
-      rescue ApiServerError
-        chatroom = []
-        messages = []
+        # messages = response.parse['data'].map { |message| message['attributes'] }
+        # chatroom.concat(messages)
+        # rescue UnauthorizedError
+        #   chatroom = nil
+        #   # messages = nil
+        # rescue ApiServerError
+        #   chatroom = nil
+        #   # messages = nil
       end
 
       # App.logger.info("Chatroom: #{chatroom}")
-
-      [chatroom, messages]
+      chatroom
     end
   end
 end

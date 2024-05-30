@@ -8,6 +8,9 @@ module ScanChat
     def initialize(chatr_info)
       @id = chatr_info['attributes']['id']
       @is_private = chatr_info['attributes']['is_private']
+      @thread = Thread.new(chatr_info['attributes']['thread'])
+      @thread_id = chatr_info['attributes']['thread_id']
+      @members = Accounts.new(chatr_info['attributes']['members'])
     end
   end
 end
