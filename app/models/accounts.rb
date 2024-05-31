@@ -9,7 +9,7 @@ module ScanChat
 
     def initialize(accs_list)
       @all = accs_list.map do |acc|
-        Account.new(acc)
+        Account.new(acc, nil)
       end
     end
   end

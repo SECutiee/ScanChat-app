@@ -22,6 +22,7 @@ module ScanChat
       routing.on String do |chatroom_id|
         routing.get do # TODO: make this secure, right now everybody can request it
           chatroom = LoadChatroom.new(App.config).call(@current_account, chatroom_id:)
+          App.logger.info("controller: Chatroom: #{chatroom}")
           chatroom = Chatroom.new(chatroom)
           #  App.logger.info("Chatroom: #{@chatroom}")
           App.logger.info("routing: Current_account: #{@current_account}")

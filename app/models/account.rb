@@ -18,6 +18,14 @@ module ScanChat
       @account_info ? @account_info['email'] : nil
     end
 
+    def nickname
+      @account_info ? @account_info['nickname'] : nil
+    end
+
+    def image
+      @account_info ? @account_info['image'] : nil
+    end
+
     def logged_out?
       @account_info.nil?
     end
