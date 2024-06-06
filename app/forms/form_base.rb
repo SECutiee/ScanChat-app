@@ -2,7 +2,7 @@
 
 require 'dry-validation'
 
-module Credence
+module ScanChat
   # Form helpers
   module Form
     USERNAME_REGEX = /^[a-zA-Z0-9]+([._]?[a-zA-Z0-9]+)*$/
