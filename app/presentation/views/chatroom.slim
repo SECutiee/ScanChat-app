@@ -1,90 +1,80 @@
-    - puts("slim: Chatroom:#{chatroom}")
-    - puts("slim: Current Account:#{current_account}")
 
-    div class="container mt-4"
-    - unless chatroom == []
-        nav class="navbar navbar-expand-lg bg-light" data-bs-theme= "light"
-            div class="container-fluid"
-                a class="navbar-brand" = "#{chatroom.thread.name}"
-                p class="navbar-text m-0"  = "Members: #{([chatroom.thread.owner.nickname] + chatroom.members.all.map { |member| member.nickname }).take(3).join(', ')}#{', ...' if chatroom.members.all.size + 1 > 3}"
-                div class="ms-auto btn-group" role="group" aria-label="Button group with nested dropdown"
-                    button type="button" class="btn btn-primary" Invite Members
-                    div class="btn-group" role="group"
-                        button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                        div class="dropdown-menu dropdown-menu-end" aria-labelledby="btnGroupDrop1" style=""
-                            a class="dropdown-item btn btn-primary" data-bs-toggle="modal" data-bs-target="#memberModal" href="/members" View Members
-                            #memberModal.modal
-                                .modal-dialog
-                                    .modal-content
+    .container.mt-4
+        - unless chatroom.nil?
+            - puts("slim: Debug:#{chatroom.members.all[0].nickname}")
+            .bg-light.rounded
+                nav.navbar.navbar-expand-lg [data-bs-theme= "light"]
+                    .container-fluid
+                        a.navbar-brand = "#{chatroom.thread.name}"
+                        p.navbar-text.m-0  = "Members: #{([chatroom.thread.owner.nickname] + chatroom.members.all.map { |member| member.nickname }).take(3).join(', ')}#{', ...' if chatroom.members.all.size + 1 > 3}"
+                        .ms-auto.btn-group [role="group" aria-label="Button group with nested dropdown"]
+                            button.btn.btn-primary [type="button"] Invite Members
+                            .btn-group [role="group"]
+                                button.btn.btn-primary.dropdown-toggle [id="btnGroupDrop1" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"]
+                                .dropdown-menu.dropdown-menu-end [aria-labelledby="btnGroupDrop1"]
+                                    a.dropdown-item [data-bs-toggle="modal" data-bs-target="#memberModal" href = "#"] View Members
+                                    - if current_account.username == chatroom.thread.owner.username
+                                        a.dropdown-item [data-bs-toggle="modal" data-bs-target="#editModal" href = "#"] Edit Chatroom
+                #memberModal.modal
+                    .modal-dialog [role="document"]
+                        .modal-content
+                                .modal-header
+                                    h5.modal-title View #{chatroom.thread.name} Members
+                                    button.btn-close [type="button" data-bs-dismiss="modal" aria-label="Close"]
+                                        span [aria-hidden="true"]
+                                .modal-body
+                                    ul.list-group
+                                        li.list-group-item.list-group-item-primary.d-flex.justify-content-between.align-items-center
+                                            a [href="../account/#{chatroom.thread.owner.username}"] Owner: #{chatroom.thread.owner.nickname}
+                                        - chatroom.members.all.map do |member|
+                                            li.list-group-item.list-group-item-secondary.d-flex.justify-content-between.align-items-center
+                                                a.list-group-item  [href="../account/#{member.username}"] = member.nickname
+                                                button.btn.btn-secondary [type="button" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Remove Member"] X
+                                .modal-footer
+                                    button.btn.btn-primary[type="button"] Save Changes
+                                    button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
+                - if current_account.username == chatroom.thread.owner.username
+                    #editModal.modal
+                        .modal-dialog [role="document"]
+                            .modal-content
                                     .modal-header
-                                        h4.modal-title
-                                        | Modal Heading
-                                        button.btn-close[type="button" data-bs-dismiss="modal" aria-label="Close"]
+                                        h5.modal-title Edit #{chatroom.thread.name} Details
+                                        button.btn-close [type="button" data-bs-dismiss="modal" aria-label="Close"]
                                             span [aria-hidden="true"]
                                     .modal-body
-                                        p Modal body text goes here.
+                                        label.col-form-label.mt-4 [for="inputDefault"] Chatroom name
+                                        input.form-control[id="inputDefault" type="text" value="#{chatroom.thread.name}"]
+                                        label.col-form-label.mt-4 [for="descriptionTextarea"] Description
+                                        textarea.form-control[id="descriptionTextarea" rows="3"] = chatroom.thread.description
+
                                     .modal-footer
                                         button.btn.btn-primary[type="button"] Save Changes
-                                        | Close
                                         button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
-                            a class="dropdown-item" href="/edit" Edit Chatroom
+                .p-2
+                    .chat-body.container-sm.border-top.border-secondary [style='overflow-y: auto; height: 60vh']
+                        - chatroom.thread.messages.all.each do |message|
+                            - if message.sender_username == current_account.username
+                                .row.d-flex.justify-content-end
+                                    .col-9.d-flex.align-items-end.justify-content-end
+                                        .d-flex.rounded.justify-content-end.p-2.bg-primary.text-light
+                                            p.m-0 = message.content
+                            - else
+                                .row.d-flex.justify-content-start
+                                    .col-9.d-flex.align-items-start.justify-content-start
+                                        .d-flex.flex-column.me-3
+                                            img.rounded-circle.border.border-dark.chat-profile-pic.mt-1 [src="/person-circle.svg" alt="profile picture"]
+                                            p.fw-bold.m-0.text-center = message.sender_nickname
+                                        .d-flex.rounded.justify-content-start.p-2.bg-secondary
+                                            p.m-0 = message.content
+                    .container-sm
 
-                / div class="collapse navbar-collapse"
-                /     ul class="navbar-nav ms-auto"
-                /         li class="nav-item dropdown"
-                /             / a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" Options
-                /             button class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true"
-                /                 span class="navbar-toggler-icon"
-                /             div class="dropdown-menu dropdown-menu-end"
-                /                 a class="dropdown-item" View Members 
-                /                 a class="dropdown-item" Invite Members
-                /                 / if @current_account is owner of chatroom
-                /                 div class="dropdown-divider"
-                /                 a class="dropdown-item disabled" Edit Chatroom
-        div class="chat-body p-2 container-sm bg-light border-top border-secondary p-2"
-            
-            - chatroom.thread.messages.all.each do |message|
-                div class="row d-flex justify-content-start"
-                    div class="col-9 d-flex align-items-start justify-content-start"
-                        div class="d-flex flex-column me-3"
-                            img src="/person-circle.svg" class="rounded-circle border border-dark chat-profile-pic mt-1" alt="profile picture"
-                            p class="fw-bold m-0 text-center" = message.sender_nickname
-                        div class="d-flex rounded justify-content-start p-2 bg-secondary"
-                            p class="m-0" = message.content
-                end
-    - else 
-        div class="alert alert-warning" role="alert"
-            h4 class="alert-heading" This chatroom is not available
-            / div class="row d-flex justify-content-start"
-            /     div class="col-9 d-flex align-items-start justify-content-start"
-            /         div class="d-flex flex-column me-3"
-            /             img src="person-circle.svg" class="rounded-circle border border-dark chat-profile-pic mt-1" alt="profile picture"
-            /             p class="fw-bold m-0" John
-            /         div class="d-flex rounded justify-content-start p-2 bg-secondary"
-            /             p class="m-0" Hi Jane, how are you?
-                                
-            / div class="row d-flex justify-content-start"
-            /     div class="col-9 d-flex align-items-start justify-content-start"
-            /         div class="d-flex flex-column me-3"
-            /             img src="person-circle.svg" class="rounded-circle border border-dark chat-profile-pic mt-1" alt="profile picture"
-            /             p class="fw-bold m-0" Jane
-            /         div class="d-flex rounded justify-content-start p-2 bg-secondary"
-            /             p class="m-0" Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, velit ac aliquet tincidunt, mauris nisl tincidunt nunc, ac lacinia justo nisl id nunc. Nullam auctor, nunc id aliquam lacinia, justo nisl lacinia nunc, ac lacinia justo nisl id nunc. Sed euismod, velit ac aliquet tincidunt, mauris nisl tincidunt nunc, ac lacinia justo nisl id nunc. Nullam auctor, nunc id aliquam lacinia, justo nisl lacinia nunc, ac lacinia justo nisl id nunc.
-                
-            / div class="row d-flex justify-content-start"
-            /     div class="col-9 d-flex align-items-start justify-content-start"
-            /         div class="d-flex flex-column me-3"
-            /             img src="person-circle.svg" class="rounded-circle border border-dark chat-profile-pic mt-1" alt="profile picture"
-            /             p class="fw-bold m-0" Jane
-            /         div class="d-flex rounded justify-content-start p-2 bg-secondary"
-            /             p class="m-0" Hi John, how are you?afasfasfafasdf asd fasd fas fas fas fas fasd fas fas f
+                            form.row.p-0 [action="/chatrooms/#{chatroom.thread.id}/messages" method="post" id="form-message"]
+                                .col-sm-9.col-lg-10.p-2.form-group
+                                    textarea.form-control [type='text' name='message-content' id="input-message" rows="2" placeholder="Type your message here"]
+                                .col-sm-3.col-lg-2.p-2.text-center
+                                    button.btn.btn-primary.mt-2 [id ='button-message' type="submit" style="width:100%" value='send'] Send
 
-            / div class="row d-flex justify-content-end"
-            /     div class="col-9 d-flex align-items-end justify-content-end"
-            /         / div class="d-flex flex-column me-1"
-            /         /     img src="person-circle.svg" class="rounded-circleborder border-dark chat-profile-pic me-2 mt-1" alt="profile picture"
-            /         /     p class="fw-boldm-0" Jane:
-            /         div class="d-flex rounded justify-content-end p-2 bg-primary text-light"
-            /             p class="m-0" Hi John, how are you?afasfasfafasdf asd fasd fas fas fas fas fasd fas fas f
-
-    
+                        
+        - else 
+            .alert.alert-warning [role="alert"]
+                h4.alert-heading This chatroom is not available

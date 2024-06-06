@@ -6,7 +6,7 @@ module ScanChat
     attr_reader :id, :is_private, :thread, :thread_id, :members
 
     def initialize(chatr_info)
-      App.logger.info "Chatroom: #{chatr_info}"
+      # App.logger.info "Chatroom: #{chatr_info}"
       @id = chatr_info['attributes']['id']
       @is_private = chatr_info['attributes']['is_private']
       @thread = Thread.new(chatr_info['attributes']['thread'])

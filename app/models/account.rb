@@ -6,9 +6,20 @@ module ScanChat
     def initialize(account_info, auth_token)
       @account_info = account_info
       @auth_token = auth_token
+      # print("before account_info: #{@account_info} nil?: #{@account_info.nil?}")
+      @account_info = @account_info['attributes'] if !@account_info.nil? && @auth_token.nil?
+      # begin
+      #   @account_info = @account_info['attributes']
+      # rescue StandardError
+      #   nil
+      # end
+      # print("after account_info: #{@account_info} nil?: #{@account_info.nil?}")
+      # if (!@account_info.nil?) & @auth_token.nil? & (!@account_info['attributes'].nil?)
+      #   @account_info = @account_info['attributes']
+      # end
     end
 
-    attr_reader :account_info, :auth_token
+    attr_reader :account_info, :auth_token, :nickname, :email, :username, :image
 
     def username
       @account_info ? @account_info['username'] : nil

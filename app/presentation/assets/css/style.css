@@ -17,7 +17,7 @@
 }
 .chat-body {
     overflow-y: auto;
-    height: 70vh;
+    height: 60vh;
 }
 .message-bubble {
     padding: 10px;
