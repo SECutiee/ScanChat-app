@@ -11,6 +11,77 @@ module ScanChat
         routing.redirect '/auth/login' unless @current_account.logged_in?
         @chatrooms_route = '/chatrooms'
 
+        # GET /chatrooms/:id
+        #  Show a chatroom
+        routing.on String do |chatroom_id|
+          @chatroom_route = "#{@chatrooms_route}/#{chatr_id}"
+
+          routing.get do # TODO: make this secure, right now everybody can request it
+            chatroom = LoadChatroom.new(App.config).call(@current_account, chatroom_id:)
+            # App.logger.info("controller: Chatroom: #{chatroom}")
+            chatroom = Chatroom.new(chatroom) unless chatroom.nil?
+            #  App.logger.info("Chatroom: #{@chatroom}")
+            # App.logger.info("routing: Current_account: #{@current_account}")
+            view :chatroom, locals: { chatroom:, current_account: @current_account }
+          rescue StandardError => e
+            puts "#{e.inspect}\n#{e.backtrace}"
+            flash[:e] = 'Chatroom not found'
+            routing.redirect @chatrooms_route
+          end
+
+          # POST /chatrooms/[chatr_id]/members
+          routing.post('members') do
+            action = routing.params['action']
+            members_info = Form::MemberEmail.new.call(routing.params)
+            if members_info.failure?
+              flash[:e] = Form.validation_errors(members_info)
+              routing.halt
+            end
+
+            task_list = {
+              'add' => { service: AddMember,
+                         message: 'Added new member to chatroom' },
+              'remove' => { service: RemoveMember,
+                            message: 'Removed member from chatroom' }
+            }
+
+            task = task_list[action]
+            task[:service].new(App.config).call(
+              current_account: @current_account,
+              member: members_info,
+              chatroom_id: chatr_id
+            )
+            flash[:notice] = task[:message]
+          rescue StandardError
+            flash[:e] = 'Could not find members'
+          ensure
+            routing.redirect @chatroom_route
+          end
+
+          # POST /chatrooms/[chatr_id]/messages/
+          routing.post('messages') do
+            message_data = Form::NewMessage.new.call(routing.params)
+            if message_data.failure?
+              flash[:e] = Form.message_values(message_data)
+              routing.halt
+            end
+
+            CreateNewMember.new(App.config).call(
+              current_account: @current_account,
+              chatroom_id: chatr_id,
+              message_data: message_data.to_h
+            )
+
+            flash[:notice] = 'Your message was added'
+          rescue StandardError => e
+            puts e.inspect
+            puts e.backtrace
+            flash[:e] = 'Could not add message'
+          ensure
+            routing.redirect @chatroom_route
+          end
+        end
+
         # POST /chatrooms
         # Create a new chatroom
         # routing.is do
@@ -31,39 +102,6 @@ module ScanChat
             view :chatrooms_all, locals: {
               current_account: @current_account, chatrooms:
             }
-          end
-        end
-
-        # GET /chatroom/:id
-        #  Show a chatroom
-        routing.on String do |chatroom_id|
-          routing.get do # TODO: make this secure, right now everybody can request it
-            chatroom = LoadChatroom.new(App.config).call(@current_account, chatroom_id:)
-            # App.logger.info("controller: Chatroom: #{chatroom}")
-            chatroom = Chatroom.new(chatroom) unless chatroom.nil?
-            #  App.logger.info("Chatroom: #{@chatroom}")
-            # App.logger.info("routing: Current_account: #{@current_account}")
-            view 'chatroom', locals: { chatroom:, current_account: @current_account }
-          end
-
-          # POST /chatrooms/:id/messages
-          # Create a new message in a chatroom
-          routing.on 'messages' do
-            routing.post do
-              # do magic with the form services, clean the data etc.
-              App.logger.info("routing: #{routing.params}")
-              message_info = CreateMessage.new(App.config).call(
-                current_account: @current_account,
-                chatroom_id:,
-                content: routing.params['message-content'],
-                sender_id: @current_account.id
-              )
-              # verify message
-            rescue StandardError => e
-              App.logger.error "Could not process posting of message: #{e.inspect}"
-              flash[:error] = 'Posting message failed -- please try later'
-              routing.redirect @register_route
-            end
           end
         end
       end
