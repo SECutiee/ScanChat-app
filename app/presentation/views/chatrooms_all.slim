@@ -1,0 +1,45 @@
+
+    .container.mt-4
+        - puts("slim: Debug:#{chatrooms.all[0].id}")
+        div class="row" style="vertical-align: bottom;"
+        div class="col-xs-9"
+            h3 My Chatrooms
+        div class="col-xs-3"
+            button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newChatroomModal" + New Chatroom
+        ul.list-group.mt-2
+            - chatrooms.all.each do |chatr|
+                li.list-group-item.list-group-item-primary.d-flex.justify-content-between.align-items-center
+                    a href="/chatrooms/#{chatr.thread.id}" = chatr.thread.name
+
+    div id="newChatroomModal" class="modal fade" role="dialog"
+        div class="modal-dialog"
+            div class="modal-content"
+                div class="modal-header"
+                    h4 class="modal-title" New Chatroom
+                    button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                form role="form" action="/chatrooms" method='post' id='new-chatroom-form'
+                    div class="modal-body"
+                            div class="form-group mb-2"
+                                label for='name_input' Chatroom Name:
+                                input type='text' name='name' id='name_input' class="form-control" placeholder="name is required"
+                            div class="form-group mb-2"
+                                label for='private_input' Private Chatroom?
+                                input type='checkbox' name='private' id='private_input' class="form-check-input ms-1"
+                            div class="form-group mb-2"
+                                label for='description_input' Description:
+                                textarea name='description' id='description_input' class="form-control" rows="3" placeholder="description is optional"
+                            div class="form-group mb-2"
+                                label for='expiration_date_input' Expiration Date:
+                                input type='date' name='expiration_date' id='expiration_date_input' class="form-control"
+                    div class="modal-footer"
+                        button type='submit' id='registration-form-submit' class='submit' value='submit' class="btn btn-primary" Create
+                        button type="button" class="btn btn-secondary" data-bs-dismiss="modal" Cancel
+    / limits the dates to choose to the future
+    script
+      | document.addEventListener('DOMContentLoaded', (event) => {
+      |   const today = new Date();
+      |   const tomorrow = new Date(today);
+      |   tomorrow.setDate(tomorrow.getDate() + 1);
+      |   const tomorrowStr = tomorrow.toISOString().split('T')[0];
+      |   document.getElementById('expiration_date_input').setAttribute('min', tomorrowStr);
+      | });
