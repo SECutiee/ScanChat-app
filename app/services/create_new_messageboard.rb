@@ -3,8 +3,8 @@
 require 'http'
 
 module ScanChat
-  # Create a new chatroom
-  class CreateNewChatroom
+  # Create a new messageboard
+  class CreateNewMessageboard
     def initialize(config)
       @config = config
     end
@@ -13,10 +13,10 @@ module ScanChat
       @config.API_URL
     end
 
-    def call(current_account:, chatroom_data:)
-      config_url = "#{api_url}/chatrooms"
+    def call(current_account:, messageboard_data:)
+      config_url = "#{api_url}/messageboards"
       response = HTTP.auth("Bearer #{current_account.auth_token}")
-                     .post(config_url, json: chatroom_data)
+                     .post(config_url, json: messageboard_data)
 
       response.code == 201 ? JSON.parse(response.body.to_s) : raise
     end
