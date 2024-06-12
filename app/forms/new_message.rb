@@ -2,7 +2,7 @@
 
 require_relative 'form_base'
 
-module Credence
+module ScanChat
   module Form
     # Form for adding a new message
     class NewMessage < Dry::Validation::Contract

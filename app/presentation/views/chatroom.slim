@@ -1,12 +1,12 @@
 
     .container.mt-4
         - unless chatroom.nil?
-            - puts("slim: Debug:#{chatroom.members.all[0].nickname}")
+            - puts("slim: Debug:#{chatroom.members[0].nickname}")
             .bg-light.rounded
                 nav.navbar.navbar-expand-lg [data-bs-theme= "light"]
                     .container-fluid
                         a.navbar-brand = "#{chatroom.thread.name}"
-                        p.navbar-text.m-0  = "Members: #{([chatroom.thread.owner.nickname] + chatroom.members.all.map { |member| member.nickname }).take(3).join(', ')}#{', ...' if chatroom.members.all.size + 1 > 3}"
+                        p.navbar-text.m-0  = "Members: #{([chatroom.thread.owner.nickname] + chatroom.members.map { |member| member.nickname }).take(3).join(', ')}#{', ...' if chatroom.members.size + 1 > 3}"
                         .ms-auto.btn-group [role="group" aria-label="Button group with nested dropdown"]
                             button.btn.btn-primary [type="button"] Invite Members
                             .btn-group [role="group"]
@@ -26,7 +26,7 @@
                                     ul.list-group
                                         li.list-group-item.list-group-item-primary.d-flex.justify-content-between.align-items-center
                                             a [href="../account/#{chatroom.thread.owner.username}"] Owner: #{chatroom.thread.owner.nickname}
-                                        - chatroom.members.all.map do |member|
+                                        - chatroom.members.map do |member|
                                             li.list-group-item.list-group-item-secondary.d-flex.justify-content-between.align-items-center
                                                 a.list-group-item  [href="../account/#{member.username}"] = member.nickname
                                                 button.btn.btn-secondary [type="button" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Remove Member"] X

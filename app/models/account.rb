@@ -7,7 +7,7 @@ module ScanChat
       @account_info = account_info
       @auth_token = auth_token
       # print("before account_info: #{@account_info} nil?: #{@account_info.nil?}")
-      @account_info = @account_info['attributes'] if !@account_info.nil? && @auth_token.nil?
+      @account_info = @account_info if !@account_info.nil? && @auth_token.nil?
       # begin
       #   @account_info = @account_info['attributes']
       # rescue StandardError

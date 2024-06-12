@@ -6,12 +6,16 @@ module ScanChat
     attr_reader :id, :name, :owner, :description, :expiration_date, :messages
 
     def initialize(thread_info)
-      @id = thread_info['attributes']['id']
-      @name = thread_info['attributes']['name']
-      @owner = Account.new(thread_info['attributes']['owner'], nil)
-      @description = thread_info['attributes']['description']
-      @expiration_date = thread_info['attributes']['expiration_date']
-      @messages = Messages.new(thread_info['attributes']['messages'])
+      process_attributes(thread_info['attributes'])
+    end
+
+    def process_attributes(attributes)
+      @id = attributes['id']
+      @name = attributes['name']
+      @owner = Account.new(attributes['owner'], nil)
+      @description = attributes['description']
+      @expiration_date = attributes['expiration_date']
+      @messages = Messages.new(attributes['messages'])
     end
   end
 end
