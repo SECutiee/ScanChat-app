@@ -5,13 +5,12 @@ require_relative 'thread'
 module ScanChat
   # Behaviors of the currently logged in account
   class Message
-    attr_reader :id, :sender_username, :sender_nickname, :sender_id, # basic info
-                :content,
-                :project # full details
+    attr_reader :id, :sender_username, :sender_nickname, :sender_id, # basic msg_info
+                :content # full details
 
-    def initialize(info)
-      process_attributes(info['attributes'])
-      process_included(info['include'])
+    def initialize(msg_info)
+      puts "Message: #{msg_info['attributes']}"
+      process_attributes(msg_info['attributes'])
     end
 
     def process_attributes(attributes)
@@ -20,10 +19,6 @@ module ScanChat
       @sender_username = attributes['sender_username']
       @sender_nickname = attributes['sender_nickname']
       @sender_id = attributes['sender_id']
-    end
-
-    def process_included(included)
-      @project = Thread.new(included['thread'])
     end
   end
 end

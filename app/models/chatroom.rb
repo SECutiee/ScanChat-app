@@ -6,16 +6,15 @@ module ScanChat
     attr_reader :id, :is_private, :thread, :thread_id, # basic info
                 :owner, :members, :messages, :policies # full details
 
-    def initialize(proj_info)
-      process_attributes(proj_info)
-      process_relationships(proj_info['relationships'])
-      process_policies(proj_info['policies'])
+    def initialize(chatr_info)
+      process_attributes(chatr_info['attributes'])
+      process_relationships(chatr_info['relationships'])
+      process_policies(chatr_info['policies'])
     end
 
     private
 
     def process_attributes(attributes)
-      App.logger.info "Chatroom: #{attributes}"
       @id = attributes['id']
       @is_private = attributes['is_private']
       @thread = Thread.new(attributes['thread'])
@@ -24,7 +23,6 @@ module ScanChat
 
     def process_relationships(relationships)
       return unless relationships
-
       @owner = Account.new(relationships['owner'])
       @members = process_members(relationships['members'])
       @messages = process_messages(relationships['messages'])
@@ -37,7 +35,7 @@ module ScanChat
     def process_messages(messages_info)
       return nil unless messages_info
 
-      messages_info.map { |msg_info| Messages.new(msg_info) }
+      Messages.new(messages_info)
     end
 
     def process_members(members)

@@ -11,18 +11,23 @@ module ScanChat
         routing.redirect '/auth/login' unless @current_account.logged_in?
         @chatrooms_route = '/chatrooms'
 
-        # GET /chatrooms/:id
         #  Show a chatroom
-        routing.on String do |chatroom_id|
+        routing.on(String) do |chatr_id|
           @chatroom_route = "#{@chatrooms_route}/#{chatr_id}"
 
+          # GET /chatrooms/[chatr_id]
           routing.get do # TODO: make this secure, right now everybody can request it
-            chatroom = LoadChatroom.new(App.config).call(@current_account, chatroom_id:)
-            # App.logger.info("controller: Chatroom: #{chatroom}")
-            chatroom = Chatroom.new(chatroom) unless chatroom.nil?
-            #  App.logger.info("Chatroom: #{@chatroom}")
-            # App.logger.info("routing: Current_account: #{@current_account}")
-            view :chatroom, locals: { chatroom:, current_account: @current_account }
+            chatr_info = GetChatroom.new(App.config).call(
+              @current_account, chatr_id
+              )
+              puts "Chatroom info: #{chatr_info}"
+            chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
+            puts chatr_info.nil?
+            App.logger.info("Chatroom: #{chatroom}")
+            App.logger.info("routing: Current_account: #{@current_account}")
+            view :chatroom, locals: { 
+              current_account: @current_account, chatroom: chatroom
+            }
           rescue StandardError => e
             puts "#{e.inspect}\n#{e.backtrace}"
             flash[:e] = 'Chatroom not found'
@@ -49,7 +54,7 @@ module ScanChat
             task[:service].new(App.config).call(
               current_account: @current_account,
               member: members_info,
-              chatroom_id: chatr_id
+              chatr_id: chatr_id
             )
             flash[:notice] = task[:message]
           rescue StandardError
@@ -68,7 +73,7 @@ module ScanChat
 
             CreateNewMember.new(App.config).call(
               current_account: @current_account,
-              chatroom_id: chatr_id,
+              chatr_id: chatr_id,
               message_data: message_data.to_h
             )
 
