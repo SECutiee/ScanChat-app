@@ -17,23 +17,24 @@
                 div class="modal-header"
                     h4 class="modal-title" New Chatroom
                     button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                form role="form" action="/chatrooms" method='post' id='new-chatroom-form'
-                    div class="modal-body"
-                            div class="form-group mb-2"
-                                label for='name_input' Chatroom Name:
-                                input type='text' name='name' id='name_input' class="form-control" placeholder="name is required"
-                            div class="form-group mb-2"
-                                label for='private_input' Private Chatroom?
-                                input type='checkbox' name='private' id='private_input' class="form-check-input ms-1"
-                            div class="form-group mb-2"
-                                label for='description_input' Description:
-                                textarea name='description' id='description_input' class="form-control" rows="3" placeholder="description is optional"
-                            div class="form-group mb-2"
-                                label for='expiration_date_input' Expiration Date:
-                                input type='date' name='expiration_date' id='expiration_date_input' class="form-control"
+                form [action="/chatrooms" method='post' id='new-chatroom-form']
+                    .modal-body
+                            .form-group.mb-2
+                                label [for='name_input'] Chatroom Name:
+                                input.form-control [type='text' name='name' id='name_input' placeholder="name is required"]
+                            .form-group.mb-2
+                                label [for='private_input'] Private Chatroom?
+                                input.form-control [type="hidden" name="is_private" value="false"]
+                                input [type='checkbox' name='is_private' id='private_input' class="form-check-input ms-1" value="true"]
+                            .form-group.mb-2
+                                label [for='description_input'] Description:
+                                textarea.form-control [type='text' name='description' id='description_input' rows="3" placeholder="description is optional"]
+                            .form-group.mb-2
+                                label [for='expiration_date_input'] Expiration Date:
+                                input.form-control [type='date' name='expiration_date' id='expiration_date_input']
                     div class="modal-footer"
-                        button type='submit' id='registration-form-submit' class='submit' value='submit' class="btn btn-primary" Create
-                        button type="button" class="btn btn-secondary" data-bs-dismiss="modal" Cancel
+                        button.submit.btn.btn-primary [type='submit' id='new-chatroom-form-submit' value='submit'] Create
+                        button.btn.btn-secondary [type="button" data-bs-dismiss="modal"] Cancel
     / limits the dates to choose to the future
     script
       | document.addEventListener('DOMContentLoaded', (event) => {

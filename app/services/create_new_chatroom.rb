@@ -5,6 +5,8 @@ require 'http'
 module ScanChat
   # Create a new chatroom
   class CreateNewChatroom
+    class ChatroomNotCreated < StandardError; end
+
     def initialize(config)
       @config = config
     end
@@ -18,7 +20,7 @@ module ScanChat
       response = HTTP.auth("Bearer #{current_account.auth_token}")
                      .post(config_url, json: chatroom_data)
 
-      response.code == 201 ? JSON.parse(response.body.to_s) : raise
+      response.code == 201 ? JSON.parse(response.body.to_s) : raise(ChatroomNotCreated)
     end
   end
 end

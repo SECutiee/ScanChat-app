@@ -9,7 +9,7 @@ module ScanChat
                 :content # full details
 
     def initialize(msg_info)
-      puts "Message: #{msg_info['attributes']}"
+      # puts "Message: #{msg_info['attributes']}"
       process_attributes(msg_info['attributes'])
     end
 

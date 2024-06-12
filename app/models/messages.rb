@@ -8,7 +8,7 @@ module ScanChat
     attr_reader :all
 
     def initialize(msgs_list)
-      puts "These are Messages: #{msgs_list}"
+      # puts "These are Messages: #{msgs_list}"
       @all = msgs_list.map do |msg|
         Message.new(msg)
       end
