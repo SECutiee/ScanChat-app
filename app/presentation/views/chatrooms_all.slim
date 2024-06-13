@@ -1,6 +1,6 @@
 
     .container.mt-4
-        - puts("slim: Debug:#{chatrooms.all[0]}")
+        - puts("slim: Debug:#{chatrooms.all[0].thread.is_expired}")
         div class="row" style="vertical-align: bottom;"
         div class="col-xs-9"
             h3 My Chatrooms
@@ -11,7 +11,10 @@
                 a.list-group-item.list-group-item-action.flex-column.align-items-start [href="/chatrooms/#{chatr.thread.id}"]
                     .d-flex.w-100.justify-content-between 
                         p.mb-1.fs-4 = chatr.thread.name
-                        small.text-muted = chatr.thread.expiration_date.to_s[0..9]
+                        - if chatr.thread.is_expired
+                            small.text-danger = "expired"
+                        - else 
+                            small.text-muted = chatr.thread.expiration_date.to_s[0..9]
                     p.mb-1 = chatr.thread.description
                     
 
