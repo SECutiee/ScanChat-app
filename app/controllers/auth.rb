@@ -41,6 +41,7 @@ module ScanChat
             authenticated[:auth_token]
           )
 
+          current_account.auth_token = authenticated[:auth_token]
           CurrentSession.new(session).current_account = current_account
 
           flash[:notice] = "Welcome back #{current_account.username}!"

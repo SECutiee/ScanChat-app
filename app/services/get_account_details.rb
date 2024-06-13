@@ -2,7 +2,7 @@
 
 require 'http'
 
-class ScanChat
+module ScanChat
   # Returns all details of an account
   class GetAccountDetails
     # Error for accounts that cannot be seen
