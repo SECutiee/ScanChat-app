@@ -15,10 +15,10 @@
     font-size: 1.25rem;
     font-weight: 500;
 }
-.chat-body {
+/* .chat-body {
     overflow-y: auto;
     height: 60vh;
-}
+} */
 .message-bubble {
     padding: 10px;
 

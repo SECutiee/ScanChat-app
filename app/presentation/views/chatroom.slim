@@ -72,7 +72,7 @@
                                         .d-flex.rounded.justify-content-start.p-2.bg-secondary
                                             p.m-0 = message.content
                     .container-sm
-
+                        - if chatroom.policies.can_add_messages
                             form.row.p-0 [action="/chatrooms/#{chatroom.thread.id}/messages" method="post" id="form-message"]
                                 .col-sm-9.col-lg-10.p-2.form-group
                                     textarea.form-control [type='text' name='content' id="input-message" rows="2" placeholder="Type your message here"]
