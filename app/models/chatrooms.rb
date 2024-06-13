@@ -8,6 +8,10 @@ module ScanChat
     attr_reader :all
 
     def initialize(chatrooms_list)
+      if chatrooms_list.nil?
+        @all = []
+        return
+      end
       @all = chatrooms_list.map do |chatr|
         Chatroom.new(chatr)
       end

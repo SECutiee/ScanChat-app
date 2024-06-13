@@ -29,11 +29,11 @@ module ScanChat
             )
 
             flash[:notice] = 'Your chatroom was created'
-            routing.redirect @chatrooms_route
           rescue StandardError => e
             puts e.inspect
             puts e.backtrace
             flash[:e] = 'Could not create chatroom'
+          ensure
             routing.redirect @chatrooms_route
           end
           # GET /chatrooms/
@@ -54,13 +54,13 @@ module ScanChat
           @chatroom_route = "#{@chatrooms_route}/#{chatr_id}"
 
           # GET /chatrooms/[chatr_id]
-          routing.get do # TODO: make this secure, right now everybody can request it
+          routing.get do
             chatr_info = GetChatroom.new(App.config).call(
               @current_account, chatr_id
             )
             # puts "Chatroom info: #{chatr_info}"
             chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
-            puts chatr_info.nil?
+            # puts chatr_info.nil?
             # App.logger.info("Chatroom: #{chatroom}")
             # App.logger.info("routing: Current_account: #{@current_account}")
             view :chatroom, locals: {
@@ -72,27 +72,51 @@ module ScanChat
             routing.redirect @chatrooms_route
           end
 
+          # POST /chatrooms/[chatr_id]/edit
+          routing.post('edit') do
+            chatr_data = Form::EditChatroom.new.call(routing.params)
+            if chatr_data.failure?
+              flash[:e] = Form.chatroom_values(chatr_data)
+              routing.halt
+            end
+            App.logger.info("post chatroom: #{chatr_data.to_h}")
+            EditChatroom.new(App.config).call(
+              current_account: @current_account,
+              thread_id: chatr_id,
+              chatroom_data: chatr_data.to_h
+            )
+            flash[:notice] = 'Your chatroom was updated'
+          rescue StandardError => e
+            routing.halt
+            App.logger.info("#{e.inspect}\n#{e.backtrace}")
+            flash[:e] = 'Could not update chatroom'
+          ensure
+            routing.redirect @chatroom_route
+          end
+          # TODO: ensure all redirects
           # POST /chatrooms/[chatr_id]/members
           routing.post('members') do
+            # App.logger.info('post members')
             action = routing.params['action']
-            members_info = Form::MemberEmail.new.call(routing.params)
+            members_info = Form::MemberUsername.new.call(routing.params)
             if members_info.failure?
               flash[:e] = Form.validation_errors(members_info)
               routing.halt
             end
-
+            # App.logger.info("members_info: #{members_info.to_h}")
+            # App.logger.info("action: #{action}")
             task_list = {
-              'add' => { service: AddMember,
+              'add' => { service: AddMemberToChatroom,
                          message: 'Added new member to chatroom' },
-              'remove' => { service: RemoveMember,
+              'remove' => { service: RemoveMemberFromChatroom,
                             message: 'Removed member from chatroom' }
             }
 
             task = task_list[action]
             task[:service].new(App.config).call(
               current_account: @current_account,
-              member: members_info,
-              chatr_id:
+              member: members_info.to_h,
+              chatroom_id: chatr_id
             )
             flash[:notice] = task[:message]
           rescue StandardError
@@ -118,11 +142,11 @@ module ScanChat
             )
 
             # flash[:notice] = 'Your message was added'
-            routing.redirect @chatroom_route
           rescue StandardError => e
             puts e.inspect
             puts e.backtrace
             flash[:e] = 'Could not add message'
+          ensure
             routing.redirect @chatroom_route
           end
         end

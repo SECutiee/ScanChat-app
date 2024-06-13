@@ -1,7 +1,7 @@
-
+    - puts("slim: Debug:#{chatroom.policies}")
     .container.mt-4
         - unless chatroom.nil?
-            - puts("slim: Debug:#{chatroom.members[0].nickname}")
+            / - puts("slim: Debug:#{chatroom.members[0].nickname}")
             .bg-light.rounded
                 nav.navbar.navbar-expand-lg [data-bs-theme= "light"]
                     .container-fluid
@@ -12,28 +12,33 @@
                             .btn-group [role="group"]
                                 button.btn.btn-primary.dropdown-toggle [id="btnGroupDrop1" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"]
                                 .dropdown-menu.dropdown-menu-end [aria-labelledby="btnGroupDrop1"]
-                                    a.dropdown-item [data-bs-toggle="modal" data-bs-target="#memberModal" href = "#"] View Members
-                                    - if current_account.username == chatroom.thread.owner.username
+                                    a.dropdown-item [data-bs-toggle="modal" data-bs-target="#infoModal" href = "#"] View Chatroom Info
+                                    - if chatroom.policies.can_edit
                                         a.dropdown-item [data-bs-toggle="modal" data-bs-target="#editModal" href = "#"] Edit Chatroom
-                #memberModal.modal
+                #infoModal.modal
                     .modal-dialog [role="document"]
                         .modal-content
                                 .modal-header
-                                    h5.modal-title View #{chatroom.thread.name} Members
+                                    h5.modal-title View #{chatroom.thread.name} Info
                                     button.btn-close [type="button" data-bs-dismiss="modal" aria-label="Close"]
                                         span [aria-hidden="true"]
                                 .modal-body
+                                    p Description: #{chatroom.thread.description}
                                     ul.list-group
                                         li.list-group-item.list-group-item-primary.d-flex.justify-content-between.align-items-center
-                                            a [href="../account/#{chatroom.thread.owner.username}"] Owner: #{chatroom.thread.owner.nickname}
+                                            p.list-group-item.m-0 Owner: #{chatroom.thread.owner.nickname}
                                         - chatroom.members.map do |member|
-                                            li.list-group-item.list-group-item-secondary.d-flex.justify-content-between.align-items-center
-                                                a.list-group-item  [href="../account/#{member.username}"] = member.nickname
-                                                button.btn.btn-secondary [type="button" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-original-title="Remove Member"] X
+                                            form [action="/chatrooms/#{chatroom.thread.id}/members" method="post" id="remove-member-form-#{member.username}"]
+                                                li.list-group-item.list-group-item-secondary.d-flex.justify-content-between.align-items-center
+                                                        input.form-control [type="hidden" name="username" value="#{member.username}"]
+                                                        input.form-control [type="hidden" name="action" value="remove"]
+                                                        a.list-group-item  [href="../account/#{member.username}"] = member.nickname
+                                                        - if chatroom.policies.can_remove_members
+                                                            button.submit.btn.btn-secondary [type="submit" id="remove-member-form-submit-#{member.username}" data-bs-placement="left" data-bs-original-title="Remove Member"] X
                                 .modal-footer
-                                    button.btn.btn-primary[type="button"] Save Changes
+                                    / button.btn.btn-primary[type="button"] Save Changes
                                     button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
-                - if current_account.username == chatroom.thread.owner.username
+                - if chatroom.policies.can_edit
                     #editModal.modal
                         .modal-dialog [role="document"]
                             .modal-content
@@ -41,15 +46,15 @@
                                         h5.modal-title Edit #{chatroom.thread.name} Details
                                         button.btn-close [type="button" data-bs-dismiss="modal" aria-label="Close"]
                                             span [aria-hidden="true"]
-                                    .modal-body
-                                        label.col-form-label.mt-4 [for="inputDefault"] Chatroom name
-                                        input.form-control[id="inputDefault" type="text" value="#{chatroom.thread.name}"]
-                                        label.col-form-label.mt-4 [for="descriptionTextarea"] Description
-                                        textarea.form-control[id="descriptionTextarea" rows="3"] = chatroom.thread.description
-
-                                    .modal-footer
-                                        button.btn.btn-primary[type="button"] Save Changes
-                                        button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
+                                    form [action="/chatrooms/#{chatroom.thread.id}/edit" method="post" id="edit-chatroom-form"]
+                                        .modal-body
+                                            label.col-form-label.mt-4 [for="inputDefault"] Chatroom name
+                                            input.form-control[id="inputDefault" name="name" type="text" value="#{chatroom.thread.name}"]
+                                            label.col-form-label.mt-4 [for="descriptionTextarea"] Description
+                                            textarea.form-control[id="descriptionTextarea" name ="description" rows="3"] = chatroom.thread.description
+                                        .modal-footer
+                                            button.submit.btn.btn-primary[type="submit" id='edit-chatroom-form-submit' value='submit'] Save Changes
+                                            button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
                 .p-2
                     .chat-body.container-sm.border-top.border-secondary [style='overflow-y: auto; height: 60vh']
                         - chatroom.thread.messages.all.each do |message|

@@ -1,21 +1,30 @@
 
     .container.mt-4
-        - puts("slim: Debug:#{chatrooms.all[0].id}")
+        - puts("slim: Debug:#{chatrooms.all[0]}")
         div class="row" style="vertical-align: bottom;"
         div class="col-xs-9"
             h3 My Chatrooms
         div class="col-xs-3"
             button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newChatroomModal" + New Chatroom
-        ul.list-group.mt-2
+        .list-group.mt-2
             - chatrooms.all.each do |chatr|
-                li.list-group-item.list-group-item-primary.d-flex.justify-content-between.align-items-center
-                    a href="/chatrooms/#{chatr.thread.id}" = chatr.thread.name
+                a.list-group-item.list-group-item-action.flex-column.align-items-start [href="/chatrooms/#{chatr.thread.id}"]
+                    .d-flex.w-100.justify-content-between 
+                        p.mb-1.fs-4 = chatr.thread.name
+                        small.text-muted = chatr.thread.expiration_date.to_s[0..9]
+                    p.mb-1 = chatr.thread.description
+                    
 
-    div id="newChatroomModal" class="modal fade" role="dialog"
-        div class="modal-dialog"
-            div class="modal-content"
-                div class="modal-header"
-                    h4 class="modal-title" New Chatroom
+
+                / li.list-group-item.list-group-item-primary.d-flex.justify-content-between.align-items-center
+                /     a href="/chatrooms/#{chatr.thread.id}" = chatr.thread.name
+                /     p = chatr.thread.description
+
+    .modal.fade [id="newChatroomModal" role="dialog"]
+        .modal-dialog
+            .modal-content
+                .modal-header
+                    h4.modal-title New Chatroom
                     button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
                 form [action="/chatrooms" method='post' id='new-chatroom-form']
                     .modal-body
@@ -32,15 +41,15 @@
                             .form-group.mb-2
                                 label [for='expiration_date_input'] Expiration Date:
                                 input.form-control [type='date' name='expiration_date' id='expiration_date_input']
-                    div class="modal-footer"
+                    .modal-footer
                         button.submit.btn.btn-primary [type='submit' id='new-chatroom-form-submit' value='submit'] Create
                         button.btn.btn-secondary [type="button" data-bs-dismiss="modal"] Cancel
     / limits the dates to choose to the future
-    script
-      | document.addEventListener('DOMContentLoaded', (event) => {
-      |   const today = new Date();
-      |   const tomorrow = new Date(today);
-      |   tomorrow.setDate(tomorrow.getDate() + 1);
-      |   const tomorrowStr = tomorrow.toISOString().split('T')[0];
-      |   document.getElementById('expiration_date_input').setAttribute('min', tomorrowStr);
-      | });
+    / script
+    /   | document.addEventListener('DOMContentLoaded', (event) => {
+    /   |   const today = new Date();
+    /   |   const tomorrow = new Date(today);
+    /   |   tomorrow.setDate(tomorrow.getDate() + 1);
+    /   |   const tomorrowStr = tomorrow.toISOString().split('T')[0];
+    /   |   document.getElementById('expiration_date_input').setAttribute('min', tomorrowStr);
+    /   | });

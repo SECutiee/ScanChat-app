@@ -2,7 +2,7 @@
 
 module ScanChat
   # Service to remove member from a chatroom
-  class RemoveMember
+  class RemoveMemberFromChatroom
     class MemberNotRemoved < StandardError; end
 
     def initialize(config)
@@ -14,10 +14,11 @@ module ScanChat
     end
 
     def call(current_account:, member:, chatroom_id:)
+      # App.logger.info("RemoveMember: #{member} #{chatroom_id}")
       response = HTTP.auth("Bearer #{current_account.auth_token}")
                      .delete("#{api_url}/chatrooms/#{chatroom_id}/members",
-                             json: { email: member[:email] })
-
+                             json: { username: member[:username] })
+      App.logger.info("RemoveMember: #{response.code} #{response.body}")
       raise MemberNotRemoved unless response.code == 200
     end
   end

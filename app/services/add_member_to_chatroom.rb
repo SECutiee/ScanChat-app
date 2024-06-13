@@ -2,7 +2,7 @@
 
 module ScanChat
   # Service to add member to project
-  class AddMember
+  class AddMemberToChatroom
     class MemberNotAdded < StandardError; end
 
     def initialize(config)
