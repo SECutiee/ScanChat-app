@@ -27,7 +27,7 @@ describe 'Test Service Objects' do
       auth_return_json = File.read(auth_account_file)
 
       WebMock.stub_request(:post, "#{API_URL}/auth/authenticate")
-             .with(body: @credentials.to_json)
+             .with(body: SignedMessage.sign(@credentials).to_json)
              .to_return(body: auth_return_json,
                         headers: { 'content-type' => 'application/json' })
 

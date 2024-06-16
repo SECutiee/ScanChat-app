@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'roda'
+require_relative 'app'
 
 module ScanChat
   # Web controller for ScanChat App
