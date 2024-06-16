@@ -28,20 +28,18 @@ module ScanChat
         # POST /auth/login
         routing.post do
           credentials = Form::LoginCredentials.new.call(routing.params)
-
           if credentials.failure?
             flash[:error] = 'Please enter both username and password'
             routing.redirect @login_route
           end
 
-          authenticated = AuthenticateAccount.new.call(**credentials.values)
-
+          authenticated = AuthenticateAccount.new(App.config)
+                                             .call(**credentials.values)
           current_account = Account.new(
             authenticated[:account],
             authenticated[:auth_token]
           )
 
-          current_account.auth_token = authenticated[:auth_token]
           CurrentSession.new(session).current_account = current_account
 
           flash[:notice] = "Welcome back #{current_account.username}!"

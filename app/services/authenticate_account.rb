@@ -9,15 +9,18 @@ module ScanChat
 
     class ApiServerError < StandardError; end
 
+    def initialize(config)
+      @config = config
+    end
+
     def call(username:, password:)
-      response = HTTP.post("#{ENV.fetch('API_URL')}/auth/authenticate",
+      response = HTTP.post("#{@config.API_URL}/auth/authenticate",
                            json: { username:, password: })
 
       raise(NotAuthenticatedError) if response.code == 401
       raise(ApiServerError) if response.code != 200
 
       account_info = JSON.parse(response.to_s)['data']['attributes']
-
       {
         account: account_info['account'],
         auth_token: account_info['auth_token']
