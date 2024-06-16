@@ -14,7 +14,7 @@ module ScanChat
     end
 
     def call(username:, password:)
-      response = HTTP.post("#{@config.API_URL}/auth/authenticate",
+      response = HTTP.post("#{ENV.fetch('API_URL', nil)}/auth/authenticate",
                            json: { username:, password: })
 
       raise(NotAuthenticatedError) if response.code == 401
