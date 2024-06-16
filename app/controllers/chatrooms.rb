@@ -62,7 +62,7 @@ module ScanChat
             # App.logger.info("Chatroom: #{chatroom}")
             # App.logger.info("routing: Current_account: #{@current_account}")
             view :chatroom, locals: {
-              current_account: @current_account, chatroom: chatroom
+              current_account: @current_account, chatroom:
             }
           rescue StandardError => e
             App.logger.error "#{e.inspect}\n#{e.backtrace}"
