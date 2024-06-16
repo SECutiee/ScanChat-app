@@ -30,6 +30,8 @@ module ScanChat
                   form: { client_id: @config.GH_CLIENT_ID,
                           client_secret: @config.GH_CLIENT_SECRET,
                           code: })
+      puts "ch: #{challenge_response.status}"
+      puts challenge_response
       raise UnauthorizedError unless challenge_response.status < 400
 
       JSON.parse(challenge_response)['access_token']
@@ -39,6 +41,8 @@ module ScanChat
       response =
         HTTP.post("#{@config.API_URL}/auth/sso",
                   json: { access_token: })
+      puts "get_sso_account_from_api: #{response.code}"
+      puts response
       raise if response.code >= 400
 
       account_info = JSON.parse(response)['data']['attributes']

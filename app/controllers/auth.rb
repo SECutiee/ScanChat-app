@@ -33,6 +33,7 @@ module ScanChat
             routing.redirect @login_route
           end
 
+          puts credentials
           authenticated = AuthenticateAccount.new.call(**credentials.values)
 
           current_account = Account.new(
@@ -59,10 +60,12 @@ module ScanChat
       routing.is 'sso_callback' do
         # GET /auth/sso_callback
         routing.get do
+          puts 'hey'
+          puts routing.params['code']
           authorized = AuthorizeGithubAccount
                        .new(App.config)
                        .call(routing.params['code'])
-
+          puts "hello: #{authorized}"
           current_account = Account.new(
             authorized[:account],
             authorized[:auth_token]

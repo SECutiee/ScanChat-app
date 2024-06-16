@@ -9,10 +9,6 @@ module ScanChat
 
     class ApiServerError < StandardError; end
 
-    def initialize(config)
-      @config = config
-    end
-
     def call(username:, password:)
       response = HTTP.post("#{ENV.fetch('API_URL', nil)}/auth/authenticate",
                            json: { username:, password: })
