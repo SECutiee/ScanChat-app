@@ -26,7 +26,7 @@
                                     p Description: #{chatroom.thread.description}
                                     ul.list-group
                                         li.list-group-item.list-group-item-primary.d-flex.justify-content-between.align-items-center
-                                            p.list-group-item.m-0 Owner: #{chatroom.thread.owner.nickname}
+                                            p.list-group-item.m-0 Owner: #{chatroom.thread.owner.username}
                                         - chatroom.members.map do |member|
                                             form [action="/chatrooms/#{chatroom.thread.id}/members" method="post" id="remove-member-form-#{member.username}"]
                                                 li.list-group-item.list-group-item-secondary.d-flex.justify-content-between.align-items-center
