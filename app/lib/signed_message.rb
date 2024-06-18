@@ -15,6 +15,8 @@ class SignedMessage
       .sign(message.to_json)
       .then { |sig| Base64.strict_encode64(sig) }
 
+      puts "message: #{message}"
+      puts "signature: #{signature}"
     { data: message, signature: signature }
   end
 end

@@ -32,7 +32,6 @@ module ScanChat
             routing.redirect @login_route
           end
 
-          puts credentials
           authenticated = AuthenticateAccount.new.call(**credentials.values)
 
           current_account = Account.new(

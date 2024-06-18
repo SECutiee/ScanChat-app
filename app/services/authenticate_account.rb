@@ -11,10 +11,10 @@ module ScanChat
 
     def call(username:, password:)
       credentials = { username: username, password: password }
-
+      puts "creds: #{credentials}"
       response = HTTP.post("#{ENV['API_URL']}/auth/authenticate",
                            json: SignedMessage.sign(credentials))
-
+      puts "response: #{response}"
       raise(NotAuthenticatedError) if response.code == 401
       raise(ApiServerError) if response.code != 200
 
