@@ -15,10 +15,7 @@
     font-size: 1.25rem;
     font-weight: 500;
 }
-/* .chat-body {
-    overflow-y: auto;
-    height: 60vh;
-} */
+
 .message-bubble {
     padding: 10px;
 
@@ -54,4 +51,64 @@
 .logo {
   max-width:35px;
   margin-top: -7px;
+}
+
+/* styles.css */
+
+.mt-5px {
+  margin-top: 5px;
+}
+
+.mt-10px {
+  margin-top: 10px;
+}
+
+.mt-20px {
+  margin-top: 20px;
+}
+
+.mt-30px {
+  margin-top: 30px;
+}
+
+.mt-40px {
+  margin-top: 40px;
+}
+
+.mt-50px {
+  margin-top: 50px;
+}
+
+.mb-20px {
+  margin-bottom: 20px;
+}
+
+.mb-35px {
+  margin-bottom: 35px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.chat-body {
+  overflow-y: auto;
+  height: 60vh;
+}
+
+.va-bottom {
+  vertical-align: bottom;
+}
+
+.gh_login {
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  padding-left: 5;
+}
+
+.gh_login.img {
+  margin-right: 10px; 
+  margin-top: 10px; 
+  margin-left: 140px;
 }

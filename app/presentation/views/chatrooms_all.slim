@@ -1,11 +1,11 @@
 
     .container.mt-4
         / - puts("slim: Debug:#{chatrooms.all[0].thread.is_expired}")
-        div class="row" style="vertical-align: bottom;"
-        div class="col-xs-9"
-            h3(style="margin-bottom: 20px;") My Chatrooms  
-        div class="col-xs-3"
-            button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newChatroomModal" style="margin-bottom: 20px;" + New Chatroom
+        .row.va-bottom
+        .col-xs-9
+            h3.mt-20px My Chatrooms  
+        .col-xs-3
+            button.btn.btn-primary.mb-20px [data-bs-toggle="modal" data-bs-target="#newChatroomModal"] + New Chatroom
         .list-group.mt-2
             - chatrooms.all.each do |chatr|
                 a.list-group-item.list-group-item-action.flex-column.align-items-start [href="/chatrooms/#{chatr.thread.id}"]

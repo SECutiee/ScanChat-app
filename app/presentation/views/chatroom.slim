@@ -57,7 +57,7 @@
                                             button.submit.btn.btn-primary[type="submit" id='edit-chatroom-form-submit' value='submit'] Save Changes
                                             button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
                 .p-2
-                    .chat-body.container-sm.border-top.border-secondary [style='overflow-y: auto; height: 60vh']
+                    .chat-body.container-sm.border-top.border-secondary
                         - chatroom.thread.messages.all.each do |message|
                             - if message.sender_username == current_account.username
                                 .row.d-flex.justify-content-end
@@ -78,7 +78,7 @@
                                 .col-sm-9.col-lg-10.p-2.form-group
                                     textarea.form-control [type='text' name='content' id="input-message" rows="2" placeholder="Type your message here"]
                                 .col-sm-3.col-lg-2.p-2.text-center
-                                    button.btn.btn-primary.mt-2.submit [id ='form-message-submit' type="submit" style="width:100%" value='submit'] Send
+                                    button.btn.btn-primary.mt-2.submit.full-width [id ='form-message-submit' type="submit" value='submit'] Send
 
                         
         - else 
