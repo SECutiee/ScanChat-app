@@ -1,4 +1,4 @@
-    - puts("slim: Debug:#{chatroom.policies}")
+    / - puts("slim: Debug:#{chatroom.policies}")
     .container.mt-4
         - unless chatroom.nil?
             / - puts("slim: Debug:#{chatroom.members[0].nickname}")
@@ -8,7 +8,8 @@
                         a.navbar-brand = "#{chatroom.thread.name}"
                         p.navbar-text.m-0  = "Members: #{([chatroom.thread.owner.nickname] + chatroom.members.map { |member| member.nickname }).take(3).join(', ')}#{', ...' if chatroom.members.size + 1 > 3}"
                         .ms-auto.btn-group [role="group" aria-label="Button group with nested dropdown"]
-                            button.btn.btn-primary [type="button"] Invite Members
+                            <a class="btn btn-primary" href="/chatrooms/#{chatroom.thread.id}/invite">Invite Members</a>
+
                             .btn-group [role="group"]
                                 button.btn.btn-primary.dropdown-toggle [id="btnGroupDrop1" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"]
                                 .dropdown-menu.dropdown-menu-end [aria-labelledby="btnGroupDrop1"]

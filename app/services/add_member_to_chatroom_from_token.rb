@@ -2,7 +2,7 @@
 
 module ScanChat
   # Service to add member to project
-  class AddMemberToChatroom
+  class AddMemberToChatroomFromToken
     class MemberNotAdded < StandardError; end
 
     def initialize(config)
@@ -13,10 +13,9 @@ module ScanChat
       @config.API_URL
     end
 
-    def call(current_account:, member:, chatroom_id:)
+    def call(current_account:, chatroom_id:, invite_token:)
       response = HTTP.auth("Bearer #{current_account.auth_token}")
-                     .put("#{api_url}/chatrooms/#{chatroom_id}/members",
-                          json: { email: member[:email] })
+                     .put("#{api_url}/chatrooms/#{chatroom_id}/members/token/#{invite_token}")
 
       raise MemberNotAdded unless response.code == 200
     end
