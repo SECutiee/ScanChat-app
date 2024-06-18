@@ -49,6 +49,46 @@ module ScanChat
           end
         end
 
+        # GET /chatrooms/join
+        routing.on('join') do
+          routing.on(String) do |qr_token|
+            routing.get do
+              # App.logger.info("qr_token: #{qr_token}")
+              chatr_info = GetChatroomFromToken.new(App.config).call(
+                @current_account, qr_token
+              )
+              # App.logger.info("Chatroom info: #{chatr_info}")
+              chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
+              # App.logger.info("chatroom: #{chatroom}")
+              view :join_chatroom, locals: {
+                current_account: @current_account,
+                chatroom:
+              }
+            end
+
+            routing.post do
+              chatr_info = GetChatroomFromToken.new(App.config).call(
+                @current_account, qr_token
+              )
+              # App.logger.info("Chatroom info: #{chatr_info}")
+              chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
+              # App.logger.info("chatroom: #{chatroom}")
+              AddMemberToChatroom.new(App.config).call(
+                current_account: @current_account,
+                member: { username: @current_account.username },
+                chatroom_id: chatroom.id
+              )
+              flash[:notice] = 'You have joined the chatroom'
+            rescue StandardError => e
+              puts e.inspect
+              puts e.backtrace
+              flash[:e] = 'Could not join chatroom'
+            ensure
+              routing.redirect @chatrooms_route
+            end
+          end
+        end
+
         # /chatrooms/[chatr_id]
         routing.on(String) do |chatr_id|
           @chatroom_route = "#{@chatrooms_route}/#{chatr_id}"
@@ -58,7 +98,9 @@ module ScanChat
             chatr_info = GetChatroom.new(App.config).call(
               @current_account, chatr_id
             )
+            # puts "Chatroom info: #{chatr_info}"
             chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
+            # puts chatr_info.nil?
             # App.logger.info("Chatroom: #{chatroom}")
             # App.logger.info("routing: Current_account: #{@current_account}")
             view :chatroom, locals: {
