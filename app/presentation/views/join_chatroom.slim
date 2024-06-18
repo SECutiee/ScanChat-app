@@ -1,7 +1,11 @@
-form action="/join_chatroom" method="post"
-    label for="join_chatroom" Do you want to join the chatroom?
-    input type="radio" name="join_chatroom" value="yes" checked
-    label for="join_chatroom_yes" Yes
-    input type="radio" name="join_chatroom" value="no"
-    label for="join_chatroom_no" No
-    button type="submit" Join
+.dialog-window
+    .chatroom-info
+        h2 = chatroom.thread.name
+        p = chatroom.thread.description
+        p Owner: #{chatroom.thread.owner}
+
+    p Do you want to join this chatroom?
+
+    .button-container
+        a.button-yes href="/chatrooms/join/#{invite_token}/now" Yes
+        a.button-no href="/" No

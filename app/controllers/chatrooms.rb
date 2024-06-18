@@ -51,32 +51,37 @@ module ScanChat
 
         # GET /chatrooms/join
         routing.on('join') do
-          routing.on(String) do |qr_token|
-            routing.get do
-              # App.logger.info("qr_token: #{qr_token}")
-              chatr_info = GetChatroomFromToken.new(App.config).call(
-                @current_account, qr_token
-              )
-              # App.logger.info("Chatroom info: #{chatr_info}")
-              chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
-              # App.logger.info("chatroom: #{chatroom}")
-              view :join_chatroom, locals: {
-                current_account: @current_account,
-                chatroom:
-              }
+          routing.on(String) do |invite_token|
+            # GET /chatrooms/join/[token]
+            routing.is do
+              routing.get do
+                chatr_info = GetChatroomFromToken.new(App.config).call(
+                  current_account: @current_account,
+                  invite_token:
+                )
+                App.logger.info("Chatroom info: #{chatr_info}")
+                chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
+                App.logger.info("chatroom: #{chatroom}")
+                view :join_chatroom, locals: {
+                  invite_token:,
+                  current_account: @current_account,
+                  chatroom:
+                }
+              end
             end
-
-            routing.post do
+            # GET /chatrooms/join/[token]/now
+            routing.get('now') do
               chatr_info = GetChatroomFromToken.new(App.config).call(
-                @current_account, qr_token
-              )
-              # App.logger.info("Chatroom info: #{chatr_info}")
-              chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
-              # App.logger.info("chatroom: #{chatroom}")
-              AddMemberToChatroom.new(App.config).call(
                 current_account: @current_account,
-                member: { username: @current_account.username },
-                chatroom_id: chatroom.id
+                invite_token:
+              )
+              App.logger.info("Chatroom info: #{chatr_info}")
+              chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
+              App.logger.info("chatroom: #{chatroom}")
+              AddMemberToChatroomFromToken.new(App.config).call(
+                current_account: @current_account,
+                chatroom_id: chatroom.thread.id,
+                invite_token:
               )
               flash[:notice] = 'You have joined the chatroom'
             rescue StandardError => e
@@ -84,7 +89,7 @@ module ScanChat
               puts e.backtrace
               flash[:e] = 'Could not join chatroom'
             ensure
-              routing.redirect @chatrooms_route
+              routing.redirect @chatrooms_route + "/#{chatroom.thread.id}"
             end
           end
         end
@@ -92,26 +97,6 @@ module ScanChat
         # /chatrooms/[chatr_id]
         routing.on(String) do |chatr_id|
           @chatroom_route = "#{@chatrooms_route}/#{chatr_id}"
-
-          # GET /chatrooms/[chatr_id]
-          routing.get do
-            chatr_info = GetChatroom.new(App.config).call(
-              @current_account, chatr_id
-            )
-            # puts "Chatroom info: #{chatr_info}"
-            chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
-            # puts chatr_info.nil?
-            # App.logger.info("Chatroom: #{chatroom}")
-            # App.logger.info("routing: Current_account: #{@current_account}")
-            view :chatroom, locals: {
-              current_account: @current_account, chatroom:
-            }
-          rescue StandardError => e
-            App.logger.error "#{e.inspect}\n#{e.backtrace}"
-            flash[:e] = 'Chatroom not found'
-            routing.redirect @chatrooms_route
-          end
-
           # POST /chatrooms/[chatr_id]/edit
           routing.post('edit') do
             chatr_data = Form::EditChatroom.new.call(routing.params)
@@ -133,7 +118,29 @@ module ScanChat
           ensure
             routing.redirect @chatroom_route
           end
-          # TODO: ensure all redirects
+
+          # GET /chatrooms/[chatr_id]/invite
+          routing.on('invite') do
+            routing.get do
+              App.logger.info("get invite: thread_id: #{chatr_id}")
+              invite_token = GenInviteToken.new(App.config).call(
+                current_account: @current_account, thread_id: chatr_id
+              )
+              App.logger.info("invite_token: #{invite_token}")
+              chatr_info = GetChatroom.new(App.config).call(
+                @current_account, chatr_id
+              )
+              # puts "Chatroom info: #{chatr_info}"
+              chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
+              view :invite_member, locals: {
+                current_account: @current_account,
+                chatroom:,
+                invite_token:,
+                base_url: request.base_url
+              }
+            end
+          end
+
           # POST /chatrooms/[chatr_id]/members
           routing.post('members') do
             # App.logger.info('post members')
@@ -187,6 +194,24 @@ module ScanChat
             flash[:e] = 'Could not add message'
           ensure
             routing.redirect @chatroom_route
+          end
+          # GET /chatrooms/[chatr_id]
+          routing.get do
+            chatr_info = GetChatroom.new(App.config).call(
+              @current_account, chatr_id
+            )
+            # puts "Chatroom info: #{chatr_info}"
+            chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
+            # puts chatr_info.nil?
+            # App.logger.info("Chatroom: #{chatroom}")
+            # App.logger.info("routing: Current_account: #{@current_account}")
+            view :chatroom, locals: {
+              current_account: @current_account, chatroom:
+            }
+          rescue StandardError => e
+            App.logger.error "#{e.inspect}\n#{e.backtrace}"
+            flash[:e] = 'Chatroom not found'
+            routing.redirect @chatrooms_route
           end
         end
 
