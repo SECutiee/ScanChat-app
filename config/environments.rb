@@ -4,7 +4,6 @@ require 'delegate'
 require 'roda'
 require 'figaro'
 require 'logger'
-require 'rack/ssl-enforcer'
 require 'rack/session'
 require 'rack/session/redis'
 require_relative '../require_app'
@@ -40,27 +39,32 @@ module ScanChat
     ONE_MONTH = 30 * 24 * 60 * 60
     @redis_url = ENV.delete('REDISCLOUD_URL')
     SecureMessage.setup(ENV.delete('MSG_KEY'))
+    SignedMessage.setup(config)
     SecureSession.setup(@redis_url) # only used in dev to wipe session store
 
     configure :development, :test do
       # Suppresses log info/warning outputs in dev/test environments
       logger.level = Logger::DEBUG
 
-      # NOTE: env var REDIS_URL only used to wipe the session store (ok to be nil)
-      SecureSession.setup(ENV.fetch('REDIS_URL', nil)) # REDIS_URL used again below
-
       # use Rack::Session::Cookie,
-      #     expire_after: ONE_MONTH, secret: config.SESSION_SECRET
+      #     secret: config.SESSION_SECRET,
+      #     expire_after: ONE_MONTH,
+      #     httponly: true,
+      #     same_site: :lax
 
       use Rack::Session::Pool,
-          expire_after: ONE_MONTH
+          expire_after: ONE_MONTH,
+          httponly: true,
+          same_site: :lax
 
       # use Rack::Session::Redis,
       #     expire_after: ONE_MONTH,
       #     redis_server: @redis_url
 
       # Allows running reload! in pry to restart entire app
-      def self.reload! = exec 'pry -r ./spec/test_load_all'
+      def self.reload!
+        exec 'pry -r ./spec/test_load_all'
+      end
     end
 
     configure :production do
