@@ -1,20 +1,20 @@
-h1 Account Details
+h3(style="margin-top: 20px;") Account Details
 
 .container
   .row
-    h3 Attributes
+    h4(style="margin-top: 40px;") Attributes
   .row
-    .col-sm-2 Username:
-    .col-sm-10
+    .col-sm-2(style="margin-top: 5px;") Username:
+    .col-sm-10(style="margin-top: 5px;")
       == account.username
   .row
     .col-sm-2 Email:
     .col-sm-10
       == account.email
   .row.top-buffer
-    h3 API Access:
+    h4(style="margin-top: 40px;") API Access:
   .row
-    span
+    span(style="margin-top: 5px;")
       = "(read-only key valid for one month)"
   .row
     .col-sm-2 API Key:
