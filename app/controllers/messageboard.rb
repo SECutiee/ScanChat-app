@@ -46,6 +46,46 @@ module ScanChat
           end
         end
 
+        # GET /messageboards/join
+        routing.on('join') do
+          routing.on(String) do |qr_token|
+            routing.get do
+              # App.logger.info("qr_token: #{qr_token}")
+              mesbor_info = GetMessageboardFromToken.new(App.config).call(
+                @current_account, qr_token
+              )
+              # App.logger.info("Chatroom info: #{mesbor_info}")
+              chatroom = Chatroom.new(mesbor_info) unless mesbor_info.nil?
+              # App.logger.info("chatroom: #{chatroom}")
+              view :join_chatroom, locals: {
+                current_account: @current_account,
+                chatroom:
+              }
+            end
+
+            routing.post do
+              mesbor_info = GetChatroomFromToken.new(App.config).call(
+                @current_account, qr_token
+              )
+              # App.logger.info("Chatroom info: #{mesbor_info}")
+              chatroom = Chatroom.new(mesbor_info) unless mesbor_info.nil?
+              # App.logger.info("chatroom: #{chatroom}")
+              AddMemberToChatroom.new(App.config).call(
+                current_account: @current_account,
+                member: { username: @current_account.username },
+                chatroom_id: chatroom.id
+              )
+              flash[:notice] = 'You have joined the chatroom'
+            rescue StandardError => e
+              puts e.inspect
+              puts e.backtrace
+              flash[:e] = 'Could not join chatroom'
+            ensure
+              routing.redirect @chatrooms_route
+            end
+          end
+        end
+
         # /messageboards/[mesbor_id]
         routing.on(String) do |mesbor_id|
           @messageboard_route = "#{@messageboards_route}/#{mesbor_id}"
