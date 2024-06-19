@@ -25,6 +25,10 @@
                                         span [aria-hidden="true"]
                                 .modal-body
                                     p Description: #{chatroom.thread.description}
+                                    - if chatroom.is_private == true 
+                                        p Status: private 
+                                    - else 
+                                        p Status: public 
                                     ul.list-group
                                         li.list-group-item.list-group-item-primary.d-flex.justify-content-between.align-items-center
                                             p.list-group-item.m-0 Owner: #{chatroom.thread.owner.username}

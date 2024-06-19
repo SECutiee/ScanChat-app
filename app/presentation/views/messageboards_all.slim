@@ -1,0 +1,58 @@
+
+.container.mt-4
+    / - puts("slim: Debug:#{messageboards.all[0].thread.is_expired}")
+    .row.va-bottom
+    .col-xs-9
+        h3.mt-20px My Messageboards  
+    .col-xs-3
+        button.btn.btn-primary.mb-20px [data-bs-toggle="modal" data-bs-target="#newMessageboardModal"] + New Messageboard
+    .list-group.mt-2
+        - messageboards.all.each do |msgb|
+            a.list-group-item.list-group-item-action.flex-column.align-items-start [href="/messageboards/#{msgb.thread.id}"]
+                .d-flex.w-100.justify-content-between 
+                    p.mb-1.fs-4 = msgb.thread.name
+                    - if msgb.thread.is_expired
+                        small.text-danger = "expired"
+                    - else 
+                        small.text-muted = msgb.thread.expiration_date.to_s[0..9]
+                p.mb-1 = msgb.thread.description
+                
+
+
+            / li.list-group-item.list-group-item-primary.d-flex.justify-content-between.align-items-center
+            /     a href="/messageboards/#{msgb.thread.id}" = msgb.thread.name
+            /     p = msgb.thread.description
+
+.modal.fade [id="newMessageboardModal" role="dialog"]
+    .modal-dialog
+        .modal-content
+            .modal-header
+                h4.modal-title New Messageboard
+                button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+            form [action="/messageboards" method='post' id='new-Messageboard-form']
+                .modal-body
+                        .form-group.mb-2
+                            label [for='name_input'] Messageboard Name:
+                            input.form-control [type='text' name='name' id='name_input' placeholder="name is required"]
+                        .form-group.mb-2
+                            label [for='private_input'] Private Messageboard?
+                            input.form-control [type="hidden" name="is_private" value="false"]
+                            input [type='checkbox' name='is_private' id='private_input' class="form-check-input ms-1" value="true"]
+                        .form-group.mb-2
+                            label [for='description_input'] Description:
+                            textarea.form-control [type='text' name='description' id='description_input' rows="3" placeholder="description is optional"]
+                        .form-group.mb-2
+                            label [for='expiration_date_input'] Expiration Date:
+                            input.form-control [type='date' name='expiration_date' id='expiration_date_input']
+                .modal-footer
+                    button.submit.btn.btn-primary [type='submit' id='new-Messageboard-form-submit' value='submit'] Create
+                    button.btn.btn-secondary [type="button" data-bs-dismiss="modal"] Cancel
+/ limits the dates to choose to the future
+/ script
+/   | document.addEventListener('DOMContentLoaded', (event) => {
+/   |   const today = new Date();
+/   |   const tomorrow = new Date(today);
+/   |   tomorrow.setDate(tomorrow.getDate() + 1);
+/   |   const tomorrowStr = tomorrow.toISOString().split('T')[0];
+/   |   document.getElementById('expiration_date_input').setAttribute('min', tomorrowStr);
+/   | });
