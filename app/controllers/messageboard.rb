@@ -6,7 +6,7 @@ require_relative 'app'
 module ScanChat
   # Web controller for ScanChat API
   class App < Roda
-    route('messageboard') do |routing|
+    route('messageboards') do |routing|
       routing.on do
         routing.redirect '/auth/login' unless @current_account.logged_in?
         @messageboards_route = '/messageboards'
@@ -237,6 +237,7 @@ module ScanChat
         # GET /messageboards/
         routing.is do
           routing.get do
+            puts "here?"
             messageboard_list = GetAllMessageboards.new(App.config).call(@current_account)
 
             messageboards = Messageboards.new(messageboard_list)
