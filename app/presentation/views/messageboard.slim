@@ -1,0 +1,86 @@
+    / - puts("slim: Debug:#{chatroom.policies}")
+    .container.mt-4
+        - unless chatroom.nil?
+            / - puts("slim: Debug:#{chatroom.members[0].nickname}")
+            .bg-light.rounded
+                nav.navbar.navbar-expand-lg [data-bs-theme= "light"]
+                    .container-fluid
+                        a.navbar-brand = "#{chatroom.thread.name}"
+                        p.navbar-text.m-0  = "Members: #{([chatroom.thread.owner.nickname] + chatroom.members.map { |member| member.nickname }).take(3).join(', ')}#{', ...' if chatroom.members.size + 1 > 3}"
+                        .ms-auto.btn-group [role="group" aria-label="Button group with nested dropdown"]
+                            <a class="btn btn-primary" href="/chatrooms/#{chatroom.thread.id}/invite">Invite Members</a>
+
+                            .btn-group [role="group"]
+                                button.btn.btn-primary.dropdown-toggle [id="btnGroupDrop1" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"]
+                                .dropdown-menu.dropdown-menu-end [aria-labelledby="btnGroupDrop1"]
+                                    a.dropdown-item [data-bs-toggle="modal" data-bs-target="#infoModal" href = "#"] View Chatroom Info
+                                    - if chatroom.policies.can_edit
+                                        a.dropdown-item [data-bs-toggle="modal" data-bs-target="#editModal" href = "#"] Edit Chatroom
+                #infoModal.modal
+                    .modal-dialog [role="document"]
+                        .modal-content
+                                .modal-header
+                                    h5.modal-title View #{chatroom.thread.name} Info
+                                    button.btn-close [type="button" data-bs-dismiss="modal" aria-label="Close"]
+                                        span [aria-hidden="true"]
+                                .modal-body
+                                    p Description: #{chatroom.thread.description}
+                                    ul.list-group
+                                        li.list-group-item.list-group-item-primary.d-flex.justify-content-between.align-items-center
+                                            p.list-group-item.m-0 Owner: #{chatroom.thread.owner.username}
+                                        - chatroom.members.map do |member|
+                                            form [action="/chatrooms/#{chatroom.thread.id}/members" method="post" id="remove-member-form-#{member.username}"]
+                                                li.list-group-item.list-group-item-secondary.d-flex.justify-content-between.align-items-center
+                                                        input.form-control [type="hidden" name="username" value="#{member.username}"]
+                                                        input.form-control [type="hidden" name="action" value="remove"]
+                                                        a.list-group-item  [href="../account/#{member.username}"] = member.nickname
+                                                        - if chatroom.policies.can_remove_members
+                                                            button.submit.btn.btn-secondary [type="submit" id="remove-member-form-submit-#{member.username}" data-bs-placement="left" data-bs-original-title="Remove Member"] X
+                                .modal-footer
+                                    / button.btn.btn-primary[type="button"] Save Changes
+                                    button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
+                - if chatroom.policies.can_edit
+                    #editModal.modal
+                        .modal-dialog [role="document"]
+                            .modal-content
+                                    .modal-header
+                                        h5.modal-title Edit #{chatroom.thread.name} Details
+                                        button.btn-close [type="button" data-bs-dismiss="modal" aria-label="Close"]
+                                            span [aria-hidden="true"]
+                                    form [action="/chatrooms/#{chatroom.thread.id}/edit" method="post" id="edit-chatroom-form"]
+                                        .modal-body
+                                            label.col-form-label.mt-4 [for="inputDefault"] Chatroom name
+                                            input.form-control[id="inputDefault" name="name" type="text" value="#{chatroom.thread.name}"]
+                                            label.col-form-label.mt-4 [for="descriptionTextarea"] Description
+                                            textarea.form-control[id="descriptionTextarea" name ="description" rows="3"] = chatroom.thread.description
+                                        .modal-footer
+                                            button.submit.btn.btn-primary[type="submit" id='edit-chatroom-form-submit' value='submit'] Save Changes
+                                            button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
+                .p-2
+                    .chat-body.container-sm.border-top.border-secondary
+                        - chatroom.thread.messages.all.each do |message|
+                            - if message.sender_username == current_account.username
+                                .row.d-flex.justify-content-end
+                                    .col-9.d-flex.align-items-end.justify-content-end
+                                        .d-flex.rounded.justify-content-end.p-2.bg-primary.text-light
+                                            p.m-0 = message.content
+                            - else
+                                .row.d-flex.justify-content-start
+                                    .col-9.d-flex.align-items-start.justify-content-start
+                                        .d-flex.flex-column.me-3
+                                            img.rounded-circle.border.border-dark.chat-profile-pic.mt-1 [src="/person-circle.svg" alt="profile picture"]
+                                            p.fw-bold.m-0.text-center = message.sender_nickname
+                                        .d-flex.rounded.justify-content-start.p-2.bg-secondary
+                                            p.m-0 = message.content
+                    .container-sm
+                        - if chatroom.policies.can_add_messages
+                            form.row.p-0 [action="/chatrooms/#{chatroom.thread.id}/messages" method="post" id="form-message"]
+                                .col-sm-9.col-lg-10.p-2.form-group
+                                    textarea.form-control [type='text' name='content' id="input-message" rows="2" placeholder="Type your message here"]
+                                .col-sm-3.col-lg-2.p-2.text-center
+                                    button.btn.btn-primary.mt-2.submit.full-width [id ='form-message-submit' type="submit" value='submit'] Send
+
+                        
+        - else 
+            .alert.alert-error [role="alert"]
+                h4.alert-heading This chatroom is not available

@@ -23,6 +23,7 @@ module ScanChat
 
     def process_relationships(relationships)
       return unless relationships
+
       @owner = Account.new(relationships['owner'])
       @members = process_members(relationships['members'])
       @messages = process_messages(relationships['messages'])
