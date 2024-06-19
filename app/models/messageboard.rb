@@ -2,6 +2,7 @@
 
 module ScanChat
   # Behaviors of the currently logged in account
+  # need to adjust
   class Messageboard
     attr_reader :id, :is_anonymous
 

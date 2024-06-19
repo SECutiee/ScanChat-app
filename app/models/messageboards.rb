@@ -4,6 +4,7 @@ require_relative 'chatroom'
 
 module ScanChat
   # Behaviors of the currently logged in account
+  # need to adjust
   class Messageboards
     attr_reader :all
 

@@ -4,6 +4,7 @@ require 'http'
 
 module ScanChat
   # Returns all messages belonging to a messageboard
+  # need to adjust
   class GetMessageboardMessages
     def initialize(config)
       @config = config

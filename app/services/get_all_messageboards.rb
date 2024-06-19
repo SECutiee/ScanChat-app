@@ -3,7 +3,7 @@
 require 'http'
 
 module ScanChat
-  # Returns all projects belonging to an account
+  # Returns all messageboards belonging to an account
   class GetAllMessageboards
     def initialize(config)
       @config = config

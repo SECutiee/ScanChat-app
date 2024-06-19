@@ -230,7 +230,7 @@ module ScanChat
             chatroom_data: chatroom_data.to_h
           )
 
-          flash[:notice] = 'Add members to your new chatroom'
+          flash[:notice] = 'Successfully create new chatroom'
         rescue StandardError => e
           App.logger.error "FAILURE Creating Chatroom: #{e.inspect}"
           flash[:error] = 'Could not create chatroom'
