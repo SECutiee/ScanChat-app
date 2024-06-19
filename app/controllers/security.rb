@@ -63,7 +63,7 @@ module ScanChat
     route('security') do |routing|
       # POST security/report_csp_violation
       routing.post 'report_csp_violation' do
-        App.logger.warn "CSP VIOLATION: #{request.body.read}"
+        # App.logger.warn "CSP VIOLATION: #{request.body.read}"
       end
     end
   end

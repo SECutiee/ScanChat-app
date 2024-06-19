@@ -214,42 +214,6 @@ module ScanChat
             routing.redirect @chatrooms_route
           end
         end
-
-        # POST /chatrooms/
-        routing.post do
-          routing.redirect '/auth/login' unless @current_account.logged_in?
-
-          chatroom_data = Form::NewChatroom.new.call(routing.params)
-          if chatroom_data.failure?
-            flash[:error] = Form.message_values(chatroom_data)
-            routing.halt
-          end
-
-          CreateNewChatroom.new(App.config).call(
-            current_account: @current_account,
-            chatroom_data: chatroom_data.to_h
-          )
-
-          flash[:notice] = 'Successfully create new chatroom'
-        rescue StandardError => e
-          App.logger.error "FAILURE Creating Chatroom: #{e.inspect}"
-          flash[:error] = 'Could not create chatroom'
-        ensure
-          routing.redirect @chatrooms_route
-        end
-
-        # GET /chatrooms/
-        routing.is do
-          routing.get do
-            chatroom_list = GetAllChatrooms.new(App.config).call(@current_account)
-
-            chatrooms = Chatrooms.new(chatroom_list)
-
-            view :chatrooms_all, locals: {
-              current_account: @current_account, chatrooms:
-            }
-          end
-        end
       end
     end
   end

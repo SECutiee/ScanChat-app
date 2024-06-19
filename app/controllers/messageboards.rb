@@ -15,15 +15,17 @@ module ScanChat
         # Create a new messageboard
         routing.is do
           routing.post do
-            mesbor_data = Form::NewMessageboard.new.call(routing.params)
-            if mesbor_data.failure?
-              flash[:e] = Form.messageboard_values(mesbor_data)
+            puts "routing.params: #{routing.params}"
+            msgb_data = Form::NewMessageboard.new.call(routing.params)
+            if msgb_data.failure?
+              flash[:e] = Form.message_values(msgb_data)
               routing.halt
             end
-            App.logger.info("post messageboard: #{mesbor_data.to_h}")
+            puts "msgb_data: #{msgb_data}"
+            App.logger.info("post messageboard: #{msgb_data.to_h}")
             CreateNewMessageboard.new(App.config).call(
               current_account: @current_account,
-              messageboard_data: mesbor_data.to_h
+              messageboard_data: msgb_data.to_h
             )
 
             flash[:notice] = 'Your messageboard was created'
@@ -95,16 +97,16 @@ module ScanChat
           @messageboard_route = "#{@messageboards_route}/#{mesbor_id}"
           # POST /messageboards/[mesbor_id]/edit
           routing.post('edit') do
-            mesbor_data = Form::EditMessageboard.new.call(routing.params)
-            if mesbor_data.failure?
-              flash[:e] = Form.messageboard_values(mesbor_data)
+            msgb_data = Form::EditMessageboard.new.call(routing.params)
+            if msgb_data.failure?
+              flash[:e] = Form.messageboard_values(msgb_data)
               routing.halt
             end
-            App.logger.info("post messageboard: #{mesbor_data.to_h}")
+            App.logger.info("post messageboard: #{msgb_data.to_h}")
             EditMessageboard.new(App.config).call(
               current_account: @current_account,
               thread_id: mesbor_id,
-              messageboard_data: mesbor_data.to_h
+              messageboard_data: msgb_data.to_h
             )
             flash[:notice] = 'Your messageboard was updated'
           rescue StandardError => e
@@ -208,43 +210,6 @@ module ScanChat
             App.logger.error "#{e.inspect}\n#{e.backtrace}"
             flash[:e] = 'Messageboard not found'
             routing.redirect @messageboards_route
-          end
-        end
-
-        # POST /messageboards/
-        routing.post do
-          routing.redirect '/auth/login' unless @current_account.logged_in?
-
-          messageboard_data = Form::NewMessageboard.new.call(routing.params)
-          if messageboard_data.failure?
-            flash[:error] = Form.message_values(messageboard_data)
-            routing.halt
-          end
-
-          CreateNewMessageboard.new(App.config).call(
-            current_account: @current_account,
-            messageboard_data: messageboard_data.to_h
-          )
-
-          flash[:notice] = 'Successfully create new messageboard'
-        rescue StandardError => e
-          App.logger.error "FAILURE Creating Messageboard: #{e.inspect}"
-          flash[:error] = 'Could not create messageboard'
-        ensure
-          routing.redirect @messageboards_route
-        end
-
-        # GET /messageboards/
-        routing.is do
-          routing.get do
-            puts "here?"
-            messageboard_list = GetAllMessageboards.new(App.config).call(@current_account)
-
-            messageboards = Messageboards.new(messageboard_list)
-
-            view :messageboards_all, locals: {
-              current_account: @current_account, messageboards:
-            }
           end
         end
       end
