@@ -16,7 +16,7 @@ module ScanChat
 
     def process_attributes(attributes)
       @id = attributes['id']
-      @is_private = attributes['is_anonymous']
+      @is_anonymous = attributes['is_anonymous']
       @thread = Thread.new(attributes['thread'])
       @thread_id = attributes['thread_id']
     end

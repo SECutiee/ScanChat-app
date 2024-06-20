@@ -49,7 +49,7 @@ module ScanChat
         connect_src: %w[wws:],
         img_src: %w['self'],
         font_src: %w['self'] + FONT_SRC,
-        script_src: %w['self'] + SCRIPT_SRC,
+        script_src: %w['self' 'unsafe-inline'] + SCRIPT_SRC,
         style_src: %W['self'] + STYLE_SRC,
         form_action: %w['self'],
         frame_ancestors: %w['none'],
