@@ -4,6 +4,7 @@ require 'delegate'
 require 'roda'
 require 'figaro'
 require 'logger'
+require 'rack/session'
 require 'rack/session/redis'
 require_relative '../require_app'
 
@@ -51,7 +52,6 @@ module ScanChat
       #     secret: config.SESSION_SECRET,
       #     httponly: true,
       #     same_site: :strict
-
 
       use Rack::Session::Pool,
           expire_after: ONE_MONTH,
