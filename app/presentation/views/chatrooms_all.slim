@@ -1,4 +1,3 @@
-
     .container.mt-4
         / - puts("slim: Debug:#{chatrooms.all[0].thread.is_expired}")
         .row.va-bottom
@@ -13,10 +12,6 @@
                .d-flex.w-100.justify-content-between 
                  p.mb-1.fs-4 
                    = chatr.thread.name
-                   - if chatr.members
-                     small.text-muted = "(#{chatr.members.size + 1})"
-                   - else
-                     small.text-muted = "(1)" 
                  - if chatr.thread.is_expired
                    small.text-danger = "expired"
                  - else 
