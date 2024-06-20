@@ -8,15 +8,20 @@
         .col-xs-3
             button.btn.btn-primary.mb-20px [data-bs-toggle="modal" data-bs-target="#newChatroomModal"] + New Chatroom
         .list-group.mt-2
-            - chatrooms.all.each do |chatr|
-                a.list-group-item.list-group-item-action.flex-column.align-items-start [href="/chatrooms/#{chatr.thread.id}"]
-                    .d-flex.w-100.justify-content-between 
-                        p.mb-1.fs-4 = chatr.thread.name
-                        - if chatr.thread.is_expired
-                            small.text-danger = "expired"
-                        - else 
-                            small.text-muted = chatr.thread.expiration_date.to_s[0..9]
-                    p.mb-1 = chatr.thread.description
+           - chatrooms.all.each do |chatr|
+             a.list-group-item.list-group-item-action.flex-column.align-items-start href="/chatrooms/#{chatr.thread.id}"
+               .d-flex.w-100.justify-content-between 
+                 p.mb-1.fs-4 
+                   = chatr.thread.name
+                   - if chatr.members
+                     small.text-muted = "(#{chatr.members.size + 1})"
+                   - else
+                     small.text-muted = "(1)" 
+                 - if chatr.thread.is_expired
+                   small.text-danger = "expired"
+                 - else 
+                   small.text-muted = chatr.thread.expiration_date.to_s[0..9]
+               p.mb-1 = chatr.thread.description
                     
 
 
