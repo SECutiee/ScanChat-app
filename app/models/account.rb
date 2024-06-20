@@ -30,7 +30,12 @@ module ScanChat
     end
 
     def nickname
-      @account_info ? @account_info['attributes']['nickname'] : nil
+      nickname = @account_info ? @account_info['attributes']['nickname'] : nil
+      if nickname.nil?
+        username
+      else
+        nickname
+      end
     end
 
     def image
