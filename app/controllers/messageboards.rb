@@ -6,79 +6,77 @@ require_relative 'app'
 module ScanChat
   # Web controller for ScanChat API
   class App < Roda
-    route('chatrooms') do |routing|
+    route('messageboards') do |routing|
       routing.on do
         routing.redirect '/auth/login' unless @current_account.logged_in?
-        @chatrooms_route = '/chatrooms'
+        @messageboards_route = '/messageboards'
 
-        # POST /chatrooms
-        # Create a new chatroom
+        # POST /messageboards
+        # Create a new messageboard
         routing.is do
           routing.post do
-            chatr_data = Form::NewChatroom.new.call(routing.params)
-            # App.logger.info("message_data: #{message_data}")
-            if chatr_data.failure?
-              # App.logger.info('validation failed')
-              flash[:e] = Form.chatroom_values(chatr_data)
+            puts "routing.params: #{routing.params}"
+            msgb_data = Form::NewMessageboard.new.call(routing.params)
+            if msgb_data.failure?
+              flash[:e] = Form.message_values(msgb_data)
               routing.halt
             end
-            App.logger.info("post chatroom: #{chatr_data.to_h}")
-            CreateNewChatroom.new(App.config).call(
+            puts "msgb_data: #{msgb_data}"
+            App.logger.info("post messageboard: #{msgb_data.to_h}")
+            CreateNewMessageboard.new(App.config).call(
               current_account: @current_account,
-              chatroom_data: chatr_data.to_h
+              messageboard_data: msgb_data.to_h
             )
 
-            flash[:notice] = 'Your chatroom was created'
+            flash[:notice] = 'Your messageboard was created'
           rescue StandardError => e
             puts e.inspect
             puts e.backtrace
-            flash[:e] = 'Could not create chatroom'
+            flash[:e] = 'Could not create messageboard'
           ensure
-            routing.redirect @chatrooms_route
+            routing.redirect @messageboards_route
           end
-          # GET /chatrooms/
-          # show the list of all chatrooms
+          # GET /messageboards/
+          # show the list of all messageboards
           routing.get do
-            chatroom_list = GetAllChatrooms.new(App.config).call(@current_account)
-            # App.logger.info("chatroom_list:#{chatroom_list}")
-            chatrooms = Chatrooms.new(chatroom_list)
+            messageboard_list = GetAllMessageboards.new(App.config).call(@current_account)
+            messageboards = Messageboards.new(messageboard_list)
 
-            view :chatrooms_all, locals: {
-              current_account: @current_account, chatrooms:
+            view :messageboards_all, locals: {
+              current_account: @current_account, messageboards:
             }
           end
         end
 
-        # GET /chatrooms/join
+        # GET /messageboards/join
         routing.on('join') do
           routing.on(String) do |invite_token|
-            # GET /chatrooms/join/[token]
+            # GET /messageboards/join/[token]
             routing.is do
               routing.get do
-                chatr_info = GetChatroomFromToken.new(App.config).call(
+                mesbor_info = GetMessageboardFromToken.new(App.config).call(
                   current_account: @current_account,
                   invite_token:
                 )
-                App.logger.info("Chatroom info: #{chatr_info}")
-                chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
-                App.logger.info("chatroom: #{chatroom}")
-                view :join_chatroom, locals: {
-                  invite_token:,
+                App.logger.info("Messageboard info: #{mesbor_info}")
+                messageboard = Messageboard.new(mesbor_info) unless mesbor_info.nil?
+                App.logger.info("messageboard: #{messageboard}")
+                view :join_messageboard, locals: {
                   current_account: @current_account,
-                  chatroom:
+                  messageboard:
                 }
               end
             end
-            # GET /chatrooms/join/[token]/now
+            # GET /messageboards/join/[token]/now ###################
             routing.get('now') do
-              chatr_info = GetChatroomFromToken.new(App.config).call(
+              mesbor_info = GetMessageboardFromToken.new(App.config).call(
                 current_account: @current_account,
                 invite_token:
               )
-              App.logger.info("Chatroom info: #{chatr_info}")
-              chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
-              App.logger.info("chatroom: #{chatroom}")
-              AddMemberToChatroomFromToken.new(App.config).call(
+              App.logger.info("Messageboard info: #{mesbor_info}")
+              messageboard = Messageboard.new(mesbor_info) unless mesbor_info.nil?
+              App.logger.info("messageboard: #{messageboard}")
+              AddMemberToMessageboardFromToken.new(App.config).call(
                 current_account: @current_account,
                 chatroom_id: chatroom.thread.id,
                 invite_token:
@@ -94,32 +92,32 @@ module ScanChat
           end
         end
 
-        # /chatrooms/[chatr_id]
-        routing.on(String) do |chatr_id|
-          @chatroom_route = "#{@chatrooms_route}/#{chatr_id}"
-          # POST /chatrooms/[chatr_id]/edit
+        # /messageboards/[mesbor_id]
+        routing.on(String) do |mesbor_id|
+          @messageboard_route = "#{@messageboards_route}/#{mesbor_id}"
+          # POST /messageboards/[mesbor_id]/edit
           routing.post('edit') do
-            chatr_data = Form::EditChatroom.new.call(routing.params)
-            if chatr_data.failure?
-              flash[:e] = Form.chatroom_values(chatr_data)
+            msgb_data = Form::EditMessageboard.new.call(routing.params)
+            if msgb_data.failure?
+              flash[:e] = Form.messageboard_values(msgb_data)
               routing.halt
             end
-            App.logger.info("post chatroom: #{chatr_data.to_h}")
-            EditChatroom.new(App.config).call(
+            App.logger.info("post messageboard: #{msgb_data.to_h}")
+            EditMessageboard.new(App.config).call(
               current_account: @current_account,
-              thread_id: chatr_id,
-              chatroom_data: chatr_data.to_h
+              thread_id: mesbor_id,
+              messageboard_data: msgb_data.to_h
             )
-            flash[:notice] = 'Your chatroom was updated'
+            flash[:notice] = 'Your messageboard was updated'
           rescue StandardError => e
             routing.halt
             App.logger.info("#{e.inspect}\n#{e.backtrace}")
-            flash[:e] = 'Could not update chatroom'
+            flash[:e] = 'Could not update messageboard'
           ensure
-            routing.redirect @chatroom_route
+            routing.redirect @messageboard_route
           end
 
-          # GET /chatrooms/[chatr_id]/invite
+          # GET /chatrooms/[chatr_id]/invite #######################
           routing.on('invite') do
             routing.get do
               App.logger.info("get invite: thread_id: #{chatr_id}")
@@ -141,7 +139,7 @@ module ScanChat
             end
           end
 
-          # POST /chatrooms/[chatr_id]/members
+          # POST /messageboards/[mesbor_id]/members #####################
           routing.post('members') do
             # App.logger.info('post members')
             action = routing.params['action']
@@ -153,10 +151,10 @@ module ScanChat
             # App.logger.info("members_info: #{members_info.to_h}")
             # App.logger.info("action: #{action}")
             task_list = {
-              'add' => { service: AddMemberToChatroom,
-                         message: 'Added new member to chatroom' },
-              'remove' => { service: RemoveMemberFromChatroom,
-                            message: 'Removed member from chatroom' }
+              'add' => { service: AddMemberToMessageboard,
+                         message: 'Added new member to messageboard' },
+              'remove' => { service: RemoveMemberFromMessageboard,
+                            message: 'Removed member from messageboard' }
             }
 
             task = task_list[action]
@@ -193,25 +191,25 @@ module ScanChat
             App.logger.error "ERROR ADDING MESSAGE: #{e.inspect}"
             flash[:e] = 'Could not add message'
           ensure
-            routing.redirect @chatroom_route
+            routing.redirect @messageboard_route
           end
-          # GET /chatrooms/[chatr_id]
+          # GET /messageboards/[mesbor_id]
           routing.get do
-            chatr_info = GetChatroom.new(App.config).call(
-              @current_account, chatr_id
+            mesbor_info = GetMessageboard.new(App.config).call(
+              @current_account, mesbor_id
             )
-            # puts "Chatroom info: #{chatr_info}"
-            chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
-            # puts chatr_info.nil?
-            # App.logger.info("Chatroom: #{chatroom}")
+            # puts "Messageboardinfo: #{mesbor_info}"
+            messageboard = Messageboard.new(mesbor_info) unless mesbor_info.nil?
+            # puts mesbor_info.nil?
+            # App.logger.info("Messageboard: #{messageboard}")
             # App.logger.info("routing: Current_account: #{@current_account}")
-            view :chatroom, locals: {
-              current_account: @current_account, chatroom:
+            view :messageboard, locals: {
+              current_account: @current_account, messageboard:
             }
           rescue StandardError => e
             App.logger.error "#{e.inspect}\n#{e.backtrace}"
-            flash[:e] = 'Chatroom not found'
-            routing.redirect @chatrooms_route
+            flash[:e] = 'Messageboard not found'
+            routing.redirect @messageboards_route
           end
         end
       end

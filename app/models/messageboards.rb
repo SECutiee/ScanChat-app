@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'chatroom'
+require_relative 'messageboard'
 
 module ScanChat
   # Behaviors of the currently logged in account
@@ -8,6 +8,10 @@ module ScanChat
     attr_reader :all
 
     def initialize(messageboards_list)
+      if messageboards_list.nil?
+        @all = []
+        return
+      end
       @all = messageboards_list.map do |mesbor|
         Messageboard.new(mesbor)
       end

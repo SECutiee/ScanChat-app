@@ -2,10 +2,10 @@
     .chatroom-info
         h2 = chatroom.thread.name
         p = chatroom.thread.description
-        p Owner: #{chatroom.thread.owner}
+        p Owner: #{chatroom.thread.owner.username}
 
     p Do you want to join this chatroom?
 
     .button-container
-        a.button-yes href="/chatrooms/join/#{invite_token}/now" Yes
-        a.button-no href="/" No
+        a.btn.btn-block.btn-social.button-yes href="/chatrooms/join/#{invite_token}/now" Yes
+        a.btn.btn-block.btn-social.button-no href="/" No

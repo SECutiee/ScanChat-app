@@ -3,7 +3,7 @@
 require 'http'
 
 module ScanChat
-  # Returns all projects belonging to an account
+  # Returns all chatrooms belonging to an account
   class GetAllChatrooms
     def initialize(config)
       @config = config
