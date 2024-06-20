@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ScanChat
-  # Service to add member to chatroom
+  # Service to add member to project
   class AddMemberToChatroomFromToken
     class MemberNotAdded < StandardError; end
 
