@@ -5,7 +5,7 @@ require_relative 'thread'
 module ScanChat
   # Behaviors of the currently logged in account
   class Message
-    attr_reader :id, :sender_username, :sender_nickname, :sender_id, # basic msg_info
+    attr_reader :id, :sender_username, :sender_nickname, :sender_id, :created_at, # basic msg_info
                 :content # full details
 
     def initialize(msg_info)
@@ -19,6 +19,7 @@ module ScanChat
       @sender_username = attributes['sender_username']
       @sender_nickname = attributes['sender_nickname']
       @sender_id = attributes['sender_id']
+      @created_at = attributes['created_at']
     end
   end
 end

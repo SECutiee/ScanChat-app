@@ -12,7 +12,7 @@ module ScanChat
     def call(current_account, msgb_id)
       response = HTTP.auth("Bearer #{current_account.auth_token}")
                      .get("#{@config.API_URL}/messageboards/#{msgb_id}")
-
+      App.logger.info("GetMessageboard response: #{response}")
       response.code == 200 ? JSON.parse(response.body.to_s)['data'] : nil
     end
   end

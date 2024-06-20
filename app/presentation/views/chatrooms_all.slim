@@ -48,12 +48,13 @@
                     .modal-footer
                         button.submit.btn.btn-primary [type='submit' id='new-chatroom-form-submit' value='submit'] Create
                         button.btn.btn-secondary [type="button" data-bs-dismiss="modal"] Cancel
+
     / limits the dates to choose to the future
-    / script
-    /   | document.addEventListener('DOMContentLoaded', (event) => {
-    /   |   const today = new Date();
-    /   |   const tomorrow = new Date(today);
-    /   |   tomorrow.setDate(tomorrow.getDate() + 1);
-    /   |   const tomorrowStr = tomorrow.toISOString().split('T')[0];
-    /   |   document.getElementById('expiration_date_input').setAttribute('min', tomorrowStr);
-    /   | });
+    script
+      | document.addEventListener('DOMContentLoaded', (event) => {
+      |   const today = new Date();
+      |   const tomorrow = new Date(today);
+      |   tomorrow.setDate(tomorrow.getDate() + 1);
+      |   const tomorrowStr = tomorrow.toISOString().split('T')[0];
+      |   document.getElementById('expiration_date_input').setAttribute('min', tomorrowStr);
+      | });
