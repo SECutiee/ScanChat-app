@@ -17,62 +17,63 @@ module ScanChat
 
     # Environment variables setup
     Figaro.application = Figaro::Application.new(
-      environment:,
+      environment: environment,
       path: File.expand_path('config/secrets.yml')
     )
     Figaro.load
-    def self.config = Figaro.env
+    def self.config() = Figaro.env
 
-    # HTTP Request logging
-    configure :development, :production do
-      plugin :common_logger, $stdout
+    # Logger setup
+    LOGGER = Logger.new($stderr)
+    def self.logger() = LOGGER
+
+    ONE_MONTH = 30 * 24 * 60 * 60
+
+    configure do
+      SecureSession.setup(ENV['REDIS_TLS_URL']) # REDIS_TLS_URL used again below
+      SecureMessage.setup(ENV.delete('MSG_KEY'))
+      SignedMessage.setup(config)
     end
 
-    # Custom events logging
-    LOGGER = Logger.new($stderr)
-    def self.logger = LOGGER
-
-    # Allows binding.pry in dev/test and rake console in production
-    require 'pry'
-
-    # Session configuration
-    ONE_MONTH = 30 * 24 * 60 * 60
-    @redis_url = ENV.delete('REDISCLOUD_URL')
-    SecureMessage.setup(ENV.delete('MSG_KEY'))
-    SignedMessage.setup(config)
-    SecureSession.setup(@redis_url) # only used in dev to wipe session store
+    configure :production do
+      use Rack::Session::Redis,
+          expire_after: ONE_MONTH,
+          httponly: true,
+          same_site: :strict,
+          redis_server: {
+            url: ENV.delete('REDIS_TLS_URL'),
+            ssl_params: { verify_mode: OpenSSL::SSL::VERIFY_NONE }
+          }
+    end
 
     configure :development, :test do
-      # Suppresses log info/warning outputs in dev/test environments
-      logger.level = Logger::DEBUG
-
       # use Rack::Session::Cookie,
-      #     secret: config.SESSION_SECRET,
       #     expire_after: ONE_MONTH,
+      #     secret: config.SESSION_SECRET,
       #     httponly: true,
-      #     same_site: :lax
+      #     same_site: :strict
 
       use Rack::Session::Pool,
           expire_after: ONE_MONTH,
           httponly: true,
-          same_site: :lax
+          same_site: :strict
 
       # use Rack::Session::Redis,
       #     expire_after: ONE_MONTH,
-      #     redis_server: @redis_url
+      #     httponly: true,
+      #     same_site: :strict,
+      #     redis_server: {
+      #       url: ENV.delete('REDIS_URL')
+      #     }
+    end
+
+    configure :development, :test do
+      require 'pry'
 
       # Allows running reload! in pry to restart entire app
       def self.reload!
         exec 'pry -r ./spec/test_load_all'
       end
-    end
-
-    configure :production do
-      use Rack::SslEnforcer, hsts: true
-
-      use Rack::Session::Redis,
-          expire_after: ONE_MONTH,
-          redis_server: @redis_url
     end
   end
 end
