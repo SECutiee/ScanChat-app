@@ -1,0 +1,27 @@
+
+.card.bg-secondary.mb-3.mt-3
+  .card-header = messageboard.thread.name
+  .card-body
+    h4.card-title Invite new members to messageboard
+    p.card-text
+      span Share this &nbsp;
+      a [href="#{base_url}/messageboards/#{messageboard.thread.id}" class="card-link"] Link
+      span &nbsp; with your friends to invite them to the messageboard.
+    button.btn.btn-primary.mb-1 onclick="copyToClipboard('#{base_url}/messageboards/#{messageboard.thread.id}')" Copy Link
+    .d-flex.justify-content-center
+      #qrcode
+    
+
+script type="text/javascript"
+  | var base_url = "#{base_url}";
+  | var link = base_url + "/messageboards/" + "#{messageboard.thread.id}";
+  | new QRCode(document.getElementById("qrcode"), link);
+
+script
+  | function copyToClipboard(text) {
+  |   navigator.clipboard.writeText(text).then(function() {
+  |     console.log('Text copied to clipboard');
+  |   }).catch(function(error) {
+  |     console.error('Could not copy text: ', error);
+  |   });
+  | }

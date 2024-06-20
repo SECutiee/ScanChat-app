@@ -10,11 +10,11 @@ module ScanChat
     class ApiServerError < StandardError; end
 
     def call(username:, password:)
-      credentials = { username: username, password: password }
-      puts "creds: #{credentials}"
-      response = HTTP.post("#{ENV['API_URL']}/auth/authenticate",
+      credentials = { username:, password: }
+      # puts "creds: #{credentials}"
+      response = HTTP.post("#{ENV.fetch('API_URL', nil)}/auth/authenticate",
                            json: SignedMessage.sign(credentials))
-      puts "response: #{response}"
+      # puts "response: #{response}"
       raise(NotAuthenticatedError) if response.code == 401
       raise(ApiServerError) if response.code != 200
 

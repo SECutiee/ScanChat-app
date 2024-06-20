@@ -32,12 +32,10 @@
                                         - if chatroom.thread.is_expired
                                             p.text-danger This chatroom has expired!
                                     - if chatroom.is_private
-                                        p.text-warning private 
-                                    p Description: #{chatroom.thread.description}
-                                    - if chatroom.is_private == true 
-                                        p Status: private 
+                                        p Status: private
                                     - else 
-                                        p Status: public 
+                                        p Status: public
+                                    p Description: #{chatroom.thread.description}
                                     ul.list-group
                                         li.list-group-item.list-group-item-primary.d-flex.justify-content-between.align-items-center
                                             p.list-group-item.m-0 Owner: #{chatroom.thread.owner.username}

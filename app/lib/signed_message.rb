@@ -12,11 +12,11 @@ class SignedMessage
 
   def self.sign(message)
     signature = RbNaCl::SigningKey.new(@signing_key)
-      .sign(message.to_json)
-      .then { |sig| Base64.strict_encode64(sig) }
+                                  .sign(message.to_json)
+                                  .then { |sig| Base64.strict_encode64(sig) }
 
-      puts "message: #{message}"
-      puts "signature: #{signature}"
-    { data: message, signature: signature }
+    # puts "message: #{message}"
+    # puts "signature: #{signature}"
+    { data: message, signature: }
   end
 end

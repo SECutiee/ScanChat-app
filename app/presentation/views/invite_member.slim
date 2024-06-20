@@ -12,8 +12,6 @@
       #qrcode
     
 
-
-
 script type="text/javascript"
   | var base_url = "#{base_url}";
   | var invite_token = "#{invite_token}";
@@ -28,14 +26,3 @@ script
   |     console.error('Could not copy text: ', error);
   |   });
   | }
-
-  / |var base_url = "#{base_url}";
-  / |var invite_token = "#{invite_token}";
-
-  / |var link = base_url + "/chatrooms/join/" + invite_token;
-  / |console.log('code executed');
-  / |// Generate the QR code
-  / |QRCode.toCanvas(document.getElementById('qrcode'), link, function (error) {
-  / |  if (error) console.error(error);
-  / |  console.log('QR code generated!');
-  / |});

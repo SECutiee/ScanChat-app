@@ -182,7 +182,7 @@ module ScanChat
               routing.halt
             end
             # App.logger.info('post test')
-            AddNewMessage.new(App.config).call(
+            AddNewMessageToChatroom.new(App.config).call(
               current_account: @current_account,
               thread_id: chatr_id,
               message_data: message_data.to_h
