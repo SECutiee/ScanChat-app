@@ -1,6 +1,7 @@
-
+- puts("slim: Debug:#{messageboard}")
 .card.bg-secondary.mb-3.mt-3
-  .card-header = messageboard.thread.name
+  .card-header
+    .h1 = messageboard.thread.name
   .card-body
     h4.card-title Invite new members to messageboard
     p.card-text

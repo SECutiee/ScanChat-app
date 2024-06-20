@@ -75,10 +75,13 @@ module ScanChat
 
           # GET /messageboards/[msgb_id]/invite
           routing.on('invite') do
-            messageboard = GetMessageboard.new(App.config).call(
+            messageboard_info = GetMessageboard.new(App.config).call(
               @current_account,
               msgb_id
             )
+            # puts "Messageboardinfo: #{mesbor_info}"
+            messageboard = Messageboard.new(messageboard_info) unless messageboard_info.nil?
+            App.logger.info("Messageboard: #{messageboard}")
             routing.get do
               view :invite_msgb, locals: {
                 current_account: @current_account,
