@@ -13,6 +13,15 @@ module ScanChat
       process_attributes(msg_info['attributes'])
     end
 
+    def sender_nickname
+      nickname = @sender_nickname
+      if nickname.nil?
+        sender_username
+      else
+        nickname
+      end
+    end
+
     def process_attributes(attributes)
       @id = attributes['id']
       @content = attributes['content']
