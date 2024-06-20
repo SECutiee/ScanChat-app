@@ -8,7 +8,7 @@ module ScanChat
     class NewMessageboard < Dry::Validation::Contract
       config.messages.load_paths << File.join(__dir__, 'errors/new_messageboard.yml')
 
-      params do # TODO: check formats
+      params do
         required(:name).filled(:string)
         optional(:description).maybe(:string)
         required(:is_anonymous).filled(:string)

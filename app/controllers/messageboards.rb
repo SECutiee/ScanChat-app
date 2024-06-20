@@ -75,11 +75,10 @@ module ScanChat
 
           # GET /messageboards/[msgb_id]/invite
           routing.on('invite') do
-            messageboard_info = GetMessageboard.new(App.config).call(
+            messageboard = GetMessageboard.new(App.config).call(
               @current_account,
               msgb_id
             )
-            messageboard = Messageboard.new(messageboard_info) unless messageboard_info.nil?
             routing.get do
               view :invite_msgb, locals: {
                 current_account: @current_account,
@@ -112,6 +111,21 @@ module ScanChat
           ensure
             routing.redirect @messageboard_route
           end
+
+          # DELETE /messageboards/[msgb_id]
+          routing.post do
+            App.logger.info("Delete messageboard: #{msgb_id}")
+            DeleteMessageboard.new(App.config).call(
+              current_account: @current_account, thread_id: msgb_id
+            )
+            flash[:notice] = 'Messageboard deleted'
+          rescue StandardError => e
+            App.logger.error "ERROR DELETING MESSAGEBOARD: #{e.inspect}"
+            flash[:e] = 'Could not delete messageboard'
+          ensure
+            routing.redirect @messageboards_route
+          end
+
           # GET /messageboards/[msgb_id]
           routing.get do
             mesbor_info = GetMessageboard.new(App.config).call(

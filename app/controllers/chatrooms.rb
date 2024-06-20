@@ -195,6 +195,20 @@ module ScanChat
           ensure
             routing.redirect @chatroom_route
           end
+
+          # DELETE /chatrooms/[chatr_id]
+          routing.post do
+            DeleteChatroom.new(App.config).call(
+              current_account: @current_account, thread_id: chatr_id
+            )
+            flash[:notice] = 'Chatroom deleted'
+          rescue StandardError => e
+            App.logger.error "ERROR DELETING CHATROOM: #{e.inspect}"
+            flash[:e] = 'Could not delete chatroom'
+          ensure
+            routing.redirect @chatrooms_route
+          end
+
           # GET /chatrooms/[chatr_id]
           routing.get do
             chatr_info = GetChatroom.new(App.config).call(

@@ -1,4 +1,4 @@
-    / - puts("slim: Debug:#{messageboard.is_anonymous}")
+    - puts("slim: Debug:#{messageboard.policies}")
     .container.mt-4
         - unless messageboard.nil?
             / - puts("slim: Debug:#{messageboard.members[0].nickname}")
@@ -34,6 +34,7 @@
                                         p Status: public
                                     p Description: #{messageboard.thread.description}
                                     p Owner: #{messageboard.thread.owner.username}
+                                .modal-footer
                                     button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
                 - if messageboard.policies.can_edit
                     #editModal.modal
@@ -52,6 +53,12 @@
                                         .modal-footer
                                             button.submit.btn.btn-primary[type="submit" id='edit-messageboard-form-submit' value='submit'] Save Changes
                                             button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
+                                    .modal-footer 
+                                        - if messageboard.policies.can_delete
+                                                form [action="/messageboards/#{messageboard.thread.id}" method="post" id="delete-messageboard-form"]
+                                                    .d-flex.justify-content-between.align-items-center.text-danger
+                                                            input.form-control [type="hidden" name="action" value="delete"]
+                                                            button.submit.btn.btn-outline-danger.btn-primary.m-3 [type="submit" id="delete-messageboard-form-submit" data-bs-placement="left" data-bs-original-title="Delete Messageboard"] Delete
                 .p-2
                     .chat-body.container-sm.border-top.border-secondary
                         - messageboard.thread.messages.all.each do |message|

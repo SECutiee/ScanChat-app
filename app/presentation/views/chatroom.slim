@@ -8,7 +8,7 @@
                         a.navbar-brand = "#{chatroom.thread.name}"
                         p.navbar-text.m-0  = "Members: #{([chatroom.thread.owner.nickname] + chatroom.members.map { |member| member.nickname }).take(3).join(', ')}#{', ...' if chatroom.members.size + 1 > 3}"
                         .ms-auto.btn-group [role="group" aria-label="Button group with nested dropdown"]
-                            - if chatroom.policies.can_add_members
+                            - if chatroom.policies.can_invite
                                 a.btn.btn-primary [href="/chatrooms/#{chatroom.thread.id}/invite"] Invite Members
                             - else
                                 a.btn.btn-primary.disabled Invite Members
@@ -48,7 +48,6 @@
                                                         - if chatroom.policies.can_remove_members
                                                             button.submit.btn.btn-secondary [type="submit" id="remove-member-form-submit-#{member.username}" data-bs-placement="left" data-bs-original-title="Remove Member"] X
                                 .modal-footer
-                                    / button.btn.btn-primary[type="button"] Save Changes
                                     button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
                 - if chatroom.policies.can_edit
                     #editModal.modal
@@ -67,6 +66,12 @@
                                         .modal-footer
                                             button.submit.btn.btn-primary[type="submit" id='edit-chatroom-form-submit' value='submit'] Save Changes
                                             button.btn.btn-secondary[data-bs-dismiss="modal" type="button"] Close
+                                    .modal-footer 
+                                         - if chatroom.policies.can_delete
+                                                form [action="/chatrooms/#{chatroom.thread.id}" method="post" id="delete-chatroom-form"]
+                                                    .d-flex.justify-content-between.align-items-center.text-danger
+                                                            input.form-control [type="hidden" name="action" value="delete"]
+                                                            button.submit.btn.btn-outline-danger.btn-primary.m-3 [type="submit" id="delete-chatroom-form-submit" data-bs-placement="left" data-bs-original-title="Delete Chatroom"] Delete
                 .p-2
                     .chat-body.container-sm.border-top.border-secondary
                         - chatroom.thread.messages.all.each do |message|

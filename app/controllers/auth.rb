@@ -42,7 +42,8 @@ module ScanChat
           CurrentSession.new(session).current_account = current_account
 
           flash[:notice] = "Welcome back #{current_account.username}!"
-          routing.redirect '/'
+
+          routing.redirect('/')
         rescue AuthenticateAccount::NotAuthenticatedError
           flash.now[:error] = 'Username and password did not match our records'
           response.status = 401
@@ -74,7 +75,7 @@ module ScanChat
           CurrentSession.new(session).current_account = current_account
 
           flash[:notice] = "Welcome #{current_account.username}!"
-          routing.redirect '/'
+          routing.redirect('/')
         rescue AuthorizeGithubAccount::UnauthorizedError
           flash[:error] = 'Could not login with Github'
           response.status = 403
