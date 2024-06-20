@@ -15,13 +15,13 @@ module ScanChat
         # Create a new messageboard
         routing.is do
           routing.post do
-            puts "routing.params: #{routing.params}"
+            # puts "routing.params: #{routing.params}"
             msgb_data = Form::NewMessageboard.new.call(routing.params)
             if msgb_data.failure?
               flash[:e] = Form.message_values(msgb_data)
               routing.halt
             end
-            puts "msgb_data: #{msgb_data}"
+            # puts "msgb_data: #{msgb_data}"
             App.logger.info("post messageboard: #{msgb_data.to_h}")
             CreateNewMessageboard.new(App.config).call(
               current_account: @current_account,
@@ -30,8 +30,8 @@ module ScanChat
 
             flash[:notice] = 'Your messageboard was created'
           rescue StandardError => e
-            puts e.inspect
-            puts e.backtrace
+            App.logger.error(e.inspect)
+            App.logger.error(e.backtrace)
             flash[:e] = 'Could not create messageboard'
           ensure
             routing.redirect @messageboards_route
@@ -48,54 +48,10 @@ module ScanChat
           end
         end
 
-        # GET /messageboards/join
-        routing.on('join') do
-          routing.on(String) do |invite_token|
-            # GET /messageboards/join/[token]
-            routing.is do
-              routing.get do
-                mesbor_info = GetMessageboardFromToken.new(App.config).call(
-                  current_account: @current_account,
-                  invite_token:
-                )
-                App.logger.info("Messageboard info: #{mesbor_info}")
-                messageboard = Messageboard.new(mesbor_info) unless mesbor_info.nil?
-                App.logger.info("messageboard: #{messageboard}")
-                view :join_messageboard, locals: {
-                  current_account: @current_account,
-                  messageboard:
-                }
-              end
-            end
-            # GET /messageboards/join/[token]/now ###################
-            routing.get('now') do
-              mesbor_info = GetMessageboardFromToken.new(App.config).call(
-                current_account: @current_account,
-                invite_token:
-              )
-              App.logger.info("Messageboard info: #{mesbor_info}")
-              messageboard = Messageboard.new(mesbor_info) unless mesbor_info.nil?
-              App.logger.info("messageboard: #{messageboard}")
-              AddMemberToMessageboardFromToken.new(App.config).call(
-                current_account: @current_account,
-                chatroom_id: chatroom.thread.id,
-                invite_token:
-              )
-              flash[:notice] = 'You have joined the chatroom'
-            rescue StandardError => e
-              puts e.inspect
-              puts e.backtrace
-              flash[:e] = 'Could not join chatroom'
-            ensure
-              routing.redirect @chatrooms_route + "/#{chatroom.thread.id}"
-            end
-          end
-        end
-
-        # /messageboards/[mesbor_id]
-        routing.on(String) do |mesbor_id|
-          @messageboard_route = "#{@messageboards_route}/#{mesbor_id}"
-          # POST /messageboards/[mesbor_id]/edit
+        # /messageboards/[msgb_id]
+        routing.on(String) do |msgb_id|
+          @messageboard_route = "#{@messageboards_route}/#{msgb_id}"
+          # POST /messageboards/[msgb_id]/edit
           routing.post('edit') do
             msgb_data = Form::EditMessageboard.new.call(routing.params)
             if msgb_data.failure?
@@ -105,7 +61,7 @@ module ScanChat
             App.logger.info("post messageboard: #{msgb_data.to_h}")
             EditMessageboard.new(App.config).call(
               current_account: @current_account,
-              thread_id: mesbor_id,
+              thread_id: msgb_id,
               messageboard_data: msgb_data.to_h
             )
             flash[:notice] = 'Your messageboard was updated'
@@ -117,60 +73,23 @@ module ScanChat
             routing.redirect @messageboard_route
           end
 
-          # GET /chatrooms/[chatr_id]/invite #######################
+          # GET /messageboards/[msgb_id]/invite
           routing.on('invite') do
+            messageboard_info = GetMessageboard.new(App.config).call(
+              @current_account,
+              msgb_id
+            )
+            messageboard = Messageboard.new(messageboard_info) unless messageboard_info.nil?
             routing.get do
-              App.logger.info("get invite: thread_id: #{chatr_id}")
-              invite_token = GenInviteToken.new(App.config).call(
-                current_account: @current_account, thread_id: chatr_id
-              )
-              App.logger.info("invite_token: #{invite_token}")
-              chatr_info = GetChatroom.new(App.config).call(
-                @current_account, chatr_id
-              )
-              # puts "Chatroom info: #{chatr_info}"
-              chatroom = Chatroom.new(chatr_info) unless chatr_info.nil?
-              view :invite_member, locals: {
+              view :invite_msgb, locals: {
                 current_account: @current_account,
-                chatroom:,
-                invite_token:,
+                messageboard:,
                 base_url: request.base_url
               }
             end
           end
 
-          # POST /messageboards/[mesbor_id]/members #####################
-          routing.post('members') do
-            # App.logger.info('post members')
-            action = routing.params['action']
-            members_info = Form::MemberUsername.new.call(routing.params)
-            if members_info.failure?
-              flash[:e] = Form.validation_errors(members_info)
-              routing.halt
-            end
-            # App.logger.info("members_info: #{members_info.to_h}")
-            # App.logger.info("action: #{action}")
-            task_list = {
-              'add' => { service: AddMemberToMessageboard,
-                         message: 'Added new member to messageboard' },
-              'remove' => { service: RemoveMemberFromMessageboard,
-                            message: 'Removed member from messageboard' }
-            }
-
-            task = task_list[action]
-            task[:service].new(App.config).call(
-              current_account: @current_account,
-              member: members_info.to_h,
-              chatroom_id: chatr_id
-            )
-            flash[:notice] = task[:message]
-          rescue StandardError
-            flash[:e] = 'Could not find members'
-          ensure
-            routing.redirect @chatroom_route
-          end
-
-          # POST /chatrooms/[chatr_id]/messages/
+          # POST /messageboards/[msgb_id]/messages/
           routing.post('messages') do
             message_data = Form::NewMessage.new.call(routing.params)
             # App.logger.info("message_data: #{message_data}")
@@ -180,9 +99,9 @@ module ScanChat
               routing.halt
             end
             # App.logger.info('post test')
-            AddNewMessage.new(App.config).call(
+            AddNewMessageToMessageboard.new(App.config).call(
               current_account: @current_account,
-              thread_id: chatr_id,
+              thread_id: msgb_id,
               message_data: message_data.to_h
             )
 
@@ -193,10 +112,10 @@ module ScanChat
           ensure
             routing.redirect @messageboard_route
           end
-          # GET /messageboards/[mesbor_id]
+          # GET /messageboards/[msgb_id]
           routing.get do
             mesbor_info = GetMessageboard.new(App.config).call(
-              @current_account, mesbor_id
+              @current_account, msgb_id
             )
             # puts "Messageboardinfo: #{mesbor_info}"
             messageboard = Messageboard.new(mesbor_info) unless mesbor_info.nil?

@@ -4,7 +4,7 @@ require 'http'
 
 module ScanChat
   # Add a new message to a messageboard
-  class AddNewMessage
+  class AddNewMessageToMessageboard
     class MessageNotAdded < StandardError; end
 
     def initialize(config)
