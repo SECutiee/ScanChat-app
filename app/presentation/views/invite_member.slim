@@ -1,9 +1,24 @@
-h1 = chatroom.thread.name
 
-a href="#{base_url}/chatrooms/join/#{invite_token}" = invite_token
+.card.bg-secondary.mb-3.mt-3
+  .card-header = chatroom.thread.name
+  .card-body
+    h4.card-title Invite new members to chatroom
+    p.card-text
+      span class="" Share this &nbsp;
+      a [href="#{base_url}/chatrooms/join/#{invite_token}" class="card-link"] Invite Link
+      span class="" &nbsp; with your friends to invite them to the chatroom.
+    button.btn.btn-primary.mb-1 onclick="copyToClipboard('#{base_url}/chatrooms/join/#{invite_token}')" Copy Link
+    .d-flex.justify-content-center
+      #qrcode
+    
 
-button.btn.btn-primary onclick="copyToClipboard('#{base_url}/chatrooms/join/#{invite_token}')"
-  | Copy Link
+
+
+script type="text/javascript"
+  | var base_url = "#{base_url}";
+  | var invite_token = "#{invite_token}";
+  | var link = base_url + "/chatrooms/join/" + invite_token;
+  | new QRCode(document.getElementById("qrcode"), link);
 
 script
   | function copyToClipboard(text) {
@@ -13,3 +28,14 @@ script
   |     console.error('Could not copy text: ', error);
   |   });
   | }
+
+  / |var base_url = "#{base_url}";
+  / |var invite_token = "#{invite_token}";
+
+  / |var link = base_url + "/chatrooms/join/" + invite_token;
+  / |console.log('code executed');
+  / |// Generate the QR code
+  / |QRCode.toCanvas(document.getElementById('qrcode'), link, function (error) {
+  / |  if (error) console.error(error);
+  / |  console.log('QR code generated!');
+  / |});

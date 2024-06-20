@@ -3,17 +3,17 @@ div class="row" style = "margin-top: 30px;"
     div class="card" style=""
       div class="card-body"
         h4 class="card-title" Need a quick and secure chatroom?
-        p class="card-text" Try ScanChat and create a new chatroom now and share easily with your friends.
-        a href="#" class="btn btn-primary" Create new Chatroom
+        p class="card-text" Try ScanChat and create a new Chatroom now and share easily with your friends.
+        a href="/chatrooms" class="btn btn-primary" create new Chatroom
     
     div class="card" style = "margin-top: 10px;"
       div class="card-body"
         p class="card-title" Need a Messageboard instead?
-        / p class="card-text" Register and start to create QR-code based messageboards and share easily with your friends.
+        p class="card-text" ScanChat can also be used to create public Messageboards, that everybody can join.
         - if current_account.logged_in?
-         a href="#" class="btn btn-primary" Create a new Messageboard
+         a href="/messageboards" class="btn btn-primary" create new Messageboard
         - else
-          a href="#" class="btn btn-primary" Register now and start creating
+          a href="/auth/register" class="btn btn-primary" Register now and start creating
         
 
   div class="col-sm-7"
@@ -22,12 +22,13 @@ div class="row" style = "margin-top: 30px;"
 
     - unless current_account.logged_in?
       p 
-        a href='/auth/login' login to start!
+        a.btn.btn-primary href='/auth/login' login to start!
 div class="row" style = "margin-top: 30px;"
   div class="col-sm-12"
     h2 How it works?
     p ScanChat allows users to create a chatroom and share the link with friends. The chatroom will be active for a limited time, and the messages will be deleted after the chatroom is closed. This ensures that the information shared is secure and private.
     p
-      a href='/auth/register' Register now to start sharing messages securely!
+      - unless current_account.logged_in?
+        a.btn.btn-primary href='/auth/register' Register now to start sharing messages securely!
   
 </div>
