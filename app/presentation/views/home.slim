@@ -4,7 +4,10 @@
       .card-body
         h4.card-title Need a quick and secure chatroom?
         p.card-text Try ScanChat and create a new Chatroom now and share easily with your friends.
-        a.btn.btn-primary [href="/chatrooms"] create new Chatroom
+        - if current_account.logged_in?
+          a.btn.btn-primary [href="/chatrooms"] create new Chatroom
+        - else
+          a.btn.btn-primary [href="/auth/register"] Register now and start creating
     
     .card.m-2
       .card-body
